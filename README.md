@@ -1,4 +1,4 @@
-# SecureDigitalEconomy
+# Secure Digital Economy
 #Secure Digital Economy(Company's Website)
 
 #Static pages
