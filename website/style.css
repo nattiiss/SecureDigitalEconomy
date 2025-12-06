@@ -72,3 +72,28 @@ nav ul li a:hover {
 .info p{
      line-height: 1.6;
 }
+
+
+.searchBar {
+    margin-top: 5%;
+    margin-bottom: 2%;
+    position: relative;
+    width: 70%;
+    left: 20%;
+}
+
+.searchInput {
+    padding: 18px 28px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    background-color: #3b3737;    
+    color: white;  
+    width: 75%;            
+}
+
+.searchInput::placeholder {
+    color: #aaa;             
+}
+
