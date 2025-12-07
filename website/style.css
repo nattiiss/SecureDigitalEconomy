@@ -63,13 +63,23 @@ nav ul li a:hover {
     font-weight: bold;
 }
 
-.info {
+.info1 {
     max-width: 70%;
     margin: 0 auto;
     padding: 20px 0;
 }
 
-.info p{
+.info1 p{
+     line-height: 1.6;
+}
+
+.info2 {
+    max-width: 70%;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+.info2 p{
      line-height: 1.6;
 }
 
@@ -95,5 +105,70 @@ nav ul li a:hover {
 
 .searchInput::placeholder {
     color: #aaa;             
+}
+
+.imgDiv1 {
+    float: left;
+    margin: 0 20px 20px 0;  
+    width: 20%;          
+    border-radius: 2px;
+}
+
+.imgDiv2 {
+    float: right;
+    margin: 0 0 20px 20px;
+    width: 20%;
+    border-radius: 2px;
+}
+
+
+.loginWrapper {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+}
+
+.loginBox {
+    width: 380px;
+    padding: 40px;
+    background: #111;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+.loginBox h2 {
+    color: #fff;
+    margin-bottom: 25px;
+    font-size: 24px;
+}
+
+.loginBox input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    background: #222;
+    border: 1px solid #333;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 15px;
+}
+
+.loginBox button {
+    width: 100%;
+    padding: 12px;
+    background: #7b8bd9;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.loginBox input,
+.loginBox button {
+    box-sizing: border-box;
 }
 
