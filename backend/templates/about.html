@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AboutUs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+    <ul>
+        <li><a href="{{ url_for('index') }}">HOME</a></li>
+        <li><a href="{{ url_for('about') }}">ABOUT US</a></li>
+        <li><a href="{{ url_for('dashboard') }}">DASHBOARD</a></li>
+        <li><a href="{{ url_for('login') }}">LOGIN</a></li>
+    </ul>
+</nav>
+
+    <div class="about-container">
+
+        <h1>About Us</h1>
+
+        <section>
+            <h2>Who We Are</h2>
+            <p>
+                PrimeEvent Management is a full-service event agency based in Vienna, specialising in the
+                conception, planning, and execution of corporate events. We support partners such as A1,
+                Erste Group, Wiener Linien, and international organisations with tailored solutions that combine
+                creativity with strong project management.
+            </p>
+        </section>
+
+        <section>
+            <h2>Our Mission</h2>
+            <p>
+                We believe that events are more than gatherings — they are strategic communication tools.
+                Our mission is to create moments that inform, inspire, and connect people while ensuring
+                seamless execution for our clients.
+            </p>
+        </section>
+
+        <section>
+            <h2>What We Do</h2>
+            <p>
+                Our services include strategic event consulting, concept development, participant management,
+                venue selection, logistics, technical production, on-site coordination, and post-event analytics.
+                We ensure reliable and efficient workflows for events of all sizes.
+            </p>
+        </section>
+
+        <section>
+            <h2>Our Clients</h2>
+            <p>
+                We partner with organisations from telecommunications, finance, public transport, technology,
+                and the public sector. We maintain long-term relationships and design events that match their
+                communication objectives.
+            </p>
+        </section>
+
+        <section>
+            <h2>Our Approach</h2>
+            <p>
+                We focus on transparency, agile planning, digital tools, clear communication, and
+                quality assurance. Every event is unique — and our processes adapt to meet the specific
+                goals of each client.
+            </p>
+        </section>
+
+    </div>
+
+</body>
+</html>

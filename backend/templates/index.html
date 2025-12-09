@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Digital Economy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<nav>
+    <ul>
+        <li><a href="{{ url_for('index') }}">HOME</a></li>
+        <li><a href="{{ url_for('about') }}">ABOUT US</a></li>
+        <li><a href="{{ url_for('dashboard') }}">DASHBOARD</a></li>
+        <li><a href="{{ url_for('login') }}">LOGIN</a></li>
+    </ul>
+</nav>
+
+
+    <div class="banner">
+     <img src="{{ url_for('static', filename='assets/pexels-sami-aksu-48867324-13010284.jpg') }}" >
+    <div class="bannerText">
+        <h1>NORDLICHT EVENT GMBH</h1>
+    </div>
+    </div>
+
+
+    </div>
+
+<div class="searchBar">
+    <input type="text" placeholder="Type something..." id="searchInput" class="searchInput">
+</div>
+<div id="searchResults" class="searchResults"></div>
+
+
+
+    <div class="info1">
+        <p>
+             <img class="imgDiv1" src="{{ url_for('static', filename='assets/pexels-abbykihano-431722.jpg') }}" >
+            <br>General information <br></br>
+            Nordlicht Event GmbH is a Vienna-based event service provider specialising in the planning, organisation, and execution of corporate events of all scales.
+            We support leading companies such as A1, Erste Group, Wiener Linien, and international partners with tailored event concepts that combine creativity, precision, and technological expertise.
+            <br></br>
+            Whether it’s large-scale conferences, leadership workshops, product launches, or exclusive corporate gatherings — our team ensures seamless coordination from the first idea to the final implementation.
+            With a strong focus on digital tools and modern communication workflows, we create efficient processes that allow our clients to focus on what matters most: their audience.
+
+        </p>
+    </div>
+
+    <div class="info2">
+        <p>
+            <img class="imgDiv1" src="{{ url_for('static', filename='assets/pexels-hasanalbari-1141678.jpg') }}" >
+            <br>Press Releases <br></br>
+
+            Here you can find recent announcements, project highlights, and updates about our work at Nordlicht Event GmbH Management.
+
+            Our latest activities include:
+
+            successful execution of a 1,500-attendee innovation summit in collaboration with leading Austrian enterprises
+
+            expansion of our digital event-tracking platform for real-time participant management
+
+            partnership agreements with new technology providers to enhance hybrid event capabilities.
+            <br></br>
+            We continuously invest in improving our offerings and exploring new opportunities to support corporate clients in delivering memorable experiences worldwide.
+            <div class="buttonWrapper">
+            <button class="button">Learn More</button>
+        </div>
+        </p>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('searchInput');
+        const resultsDiv = document.getElementById('searchResults');
+
+        input.addEventListener('input', () => {
+            resultsDiv.innerText = input.value; 
+        });
+    });
+</script>
+
+</body>
+</html>
