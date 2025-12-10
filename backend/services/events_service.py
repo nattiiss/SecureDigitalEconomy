@@ -18,7 +18,8 @@ class EventService:
             date=data["date"],
             budget=data["budget"],
             client_id=data["client_id"],
-            event_type_id=data["event_type_id"]
+            event_type_id=data["event_type_id"],
+            guests=data.get("guests", 0)
         )
         db.session.add(event)
         db.session.commit()
@@ -33,6 +34,8 @@ class EventService:
         event.budget = data.get("budget", event.budget)
         event.client_id = data.get("client_id", event.client_id)
         event.event_type_id = data.get("event_type_id", event.event_type_id)
+        event.guests = data.get("guests", event.guests)
+
 
         db.session.commit()
         return event

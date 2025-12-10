@@ -14,7 +14,9 @@ def get_events():
             "date": e.date,
             "budget": e.budget,
             "client_id": e.client_id,
-            "event_type_id": e.event_type_id
+            "event_type_id": e.event_type_id,
+            "guests": e.guests
+
         }
         for e in events
     ])
@@ -29,7 +31,9 @@ def get_event(event_id):
         "date": e.date,
         "budget": e.budget,
         "client_id": e.client_id,
-        "event_type_id": e.event_type_id
+        "event_type_id": e.event_type_id,
+        "guests": e.guests
+
     }
 
 

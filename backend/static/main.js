@@ -1,8 +1,24 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    await loadEvents();
-    await loadCustomers();
+// Theme toggle
+document.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.getElementById("themeToggle");
+    if (toggle) {
+        toggle.addEventListener("click", () => {
+            document.body.classList.toggle("theme-light");
+            document.body.classList.toggle("theme-dark");
+        });
+    }
+
+    if (document.getElementById("eventsChart")) {
+        initDashboard();
+    }
 });
 
+// Dashboard logic
+
+// Map for event types
+let eventTypesMap = {};
+
+// Load simple KPIs
 async function loadEvents() {
     try {
         const res = await fetch('/events/');
@@ -12,16 +28,13 @@ async function loadEvents() {
 
         const kpiElement = document.getElementById('eventsKPI');
         if (kpiElement) {
-            kpiElement.innerText = data.length; 
-        } else {
-            console.warn('Element #eventsKPI nicht gefunden');
+            kpiElement.innerText = data.length;
         }
 
         const listElement = document.getElementById('eventsList');
         if (listElement) {
             listElement.innerHTML = data.map(e => `<li>${e.title} - ${e.date}</li>`).join('');
         }
-
     } catch (err) {
         console.error('Error fetching events:', err);
     }
@@ -32,7 +45,10 @@ async function loadProfit() {
         const res = await fetch('/payments/');
         const data = await res.json();
         const totalProfit = data.reduce((sum, p) => sum + p.amount, 0);
-        document.getElementById('profitKPI').innerText = '$' + totalProfit;
+        const el = document.getElementById('profitKPI');
+        if (el) {
+            el.innerText = '$' + totalProfit;
+        }
     } catch (err) {
         console.error('Error fetching profit:', err);
     }
@@ -40,17 +56,18 @@ async function loadProfit() {
 
 async function loadCustomers() {
     try {
-        const res = await fetch('/clients/'); 
-        console.log("Response status:", res.status);
+        const res = await fetch('/clients/');
         const data = await res.json();
-        console.log("Clients data:", data);
-        document.getElementById('customersKPI').innerText = data.length;
+        const el = document.getElementById('customersKPI');
+        if (el) {
+            el.innerText = data.length;
+        }
     } catch (err) {
         console.error('Error fetching customers:', err);
     }
 }
 
-
+// Top payment systems
 async function loadTopPayments() {
     try {
         const resPayments = await fetch('/payments/');
@@ -69,10 +86,11 @@ async function loadTopPayments() {
         });
 
         const sorted = Object.entries(counts)
-            .sort((a,b) => b[1]-a[1])
-            .slice(0,3);
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3);
 
         const tbody = document.getElementById('topPaymentsTableBody');
+        if (!tbody) return;
         tbody.innerHTML = '';
         sorted.forEach(([system, count]) => {
             const tr = document.createElement('tr');
@@ -85,7 +103,7 @@ async function loadTopPayments() {
     }
 }
 
-
+// Event types
 async function loadEventTypes() {
     try {
         const res = await fetch("/event-types/");
@@ -98,11 +116,13 @@ async function loadEventTypes() {
     }
 }
 
+// Event details table
 async function loadEventDetails() {
     try {
         const res = await fetch('/events/');
         const data = await res.json();
         const tbody = document.getElementById('eventDetailsTableBody');
+        if (!tbody) return;
         tbody.innerHTML = '';
 
         data.forEach(ev => {
@@ -112,7 +132,7 @@ async function loadEventDetails() {
                 <td>${eventTypesMap[ev.event_type_id] || "Unknown"}</td>
                 <td>${ev.date}</td>
                 <td>${ev.budget}</td>
-                <td>${ev.guests || 0}</td> <!-- falls guests nicht existiert -->
+                <td>${ev.guests || 0}</td>
             `;
             tbody.appendChild(tr);
         });
@@ -121,44 +141,58 @@ async function loadEventDetails() {
     }
 }
 
+// Top budgets table
 async function loadTopBudgets() {
     try {
         const res = await fetch('/events/');
         const data = await res.json();
-        const sorted = data.sort((a,b)=>b.budget - a.budget).slice(0,5);
+
+        const sorted = data.sort((a, b) => b.budget - a.budget).slice(0, 5);
+
         const tbody = document.getElementById('topBudgetsTableBody');
+        if (!tbody) return;
         tbody.innerHTML = '';
+
         sorted.forEach(ev => {
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${ev.title}</td><td>${ev.budget}</td>`;
+            tr.innerHTML = `
+                <td>${ev.title}</td>
+                <td>${ev.budget}</td>
+            `;
             tbody.appendChild(tr);
         });
+
     } catch (err) {
-        console.error('Error fetching top budgets:', err);
+        console.error('Error loading top budgets:', err);
     }
 }
 
-
+// Events per month chart
 async function loadEventsChart() {
     try {
         const res = await fetch('/events/');
         const data = await res.json();
 
-        const months = Array.from({length:12}, (_,i)=>i+1);
-        const eventsPerMonth = months.map(m => data.filter(ev => new Date(ev.date).getMonth()+1 === m).length);
+        const months = Array.from({ length: 12 }, (_, i) => i + 1);
+        const eventsPerMonth = months.map(m =>
+            data.filter(ev => new Date(ev.date).getMonth() + 1 === m).length
+        );
 
-        const ctx = document.getElementById('eventsChart').getContext('2d');
+        const canvas = document.getElementById('eventsChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: months.map(m=>'Month '+m),
+                labels: months.map(m => 'Month ' + m),
                 datasets: [{
                     label: 'Events per Month',
                     data: eventsPerMonth,
                     backgroundColor: 'rgba(54, 162, 235, 0.6)'
                 }]
             },
-            options: { responsive:true }
+            options: { responsive: true }
         });
 
     } catch (err) {
@@ -166,23 +200,26 @@ async function loadEventsChart() {
     }
 }
 
-
+// Profit per month chart
 async function loadProfitChart() {
     try {
         const res = await fetch('/payments/');
         const data = await res.json();
 
-        const months = Array.from({length:12}, (_,i)=>i+1);
+        const months = Array.from({ length: 12 }, (_, i) => i + 1);
         const profitPerMonth = months.map(m => data
-            .filter(p => new Date(p.date).getMonth()+1 === m)
-            .reduce((sum,p)=>sum+p.amount,0)
+            .filter(p => new Date(p.date).getMonth() + 1 === m)
+            .reduce((sum, p) => sum + p.amount, 0)
         );
 
-        const ctx = document.getElementById('profitChart').getContext('2d');
+        const canvas = document.getElementById('profitChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: months.map(m=>'Month '+m),
+                labels: months.map(m => 'Month ' + m),
                 datasets: [{
                     label: 'Profit per Month',
                     data: profitPerMonth,
@@ -191,7 +228,7 @@ async function loadProfitChart() {
                     fill: true
                 }]
             },
-            options: { responsive:true }
+            options: { responsive: true }
         });
 
     } catch (err) {
@@ -199,7 +236,7 @@ async function loadProfitChart() {
     }
 }
 
-
+// Avg profit per customer chart + KPI
 async function loadAvgProfitChart() {
     try {
         const paymentsRes = await fetch('/payments/');
@@ -207,32 +244,45 @@ async function loadAvgProfitChart() {
         const payments = await paymentsRes.json();
         const clients = await clientsRes.json();
 
-        const months = Array.from({length:12}, (_,i)=>i+1);
+        const months = Array.from({ length: 12 }, (_, i) => i + 1);
         const avgProfitPerMonth = months.map(m => {
-            const monthPayments = payments.filter(p => new Date(p.date).getMonth()+1 === m);
-            return monthPayments.reduce((sum,p)=>sum+p.amount,0) / clients.length;
+            const monthPayments = payments.filter(p => new Date(p.date).getMonth() + 1 === m);
+            return clients.length
+                ? monthPayments.reduce((sum, p) => sum + p.amount, 0) / clients.length
+                : 0;
         });
 
-        const ctx = document.getElementById('avgProfitChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: months.map(m=>'Month '+m),
-                datasets: [{
-                    label: 'Avg Profit per Customer',
-                    data: avgProfitPerMonth,
-                    backgroundColor: 'rgba(153, 102, 255, 0.6)'
-                }]
-            },
-            options: { responsive:true }
-        });
+        const canvas = document.getElementById('avgProfitChart');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months.map(m => 'Month ' + m),
+                    datasets: [{
+                        label: 'Avg Profit per Customer',
+                        data: avgProfitPerMonth,
+                        backgroundColor: 'rgba(153, 102, 255, 0.6)'
+                    }]
+                },
+                options: { responsive: true }
+            });
+        }
+
+        // New KPI: overall average profit per customer (2025)
+        const totalProfit = payments.reduce((sum, p) => sum + p.amount, 0);
+        const overallAvg = clients.length ? totalProfit / clients.length : 0;
+        const kpi = document.getElementById('avgProfitKPI');
+        if (kpi) {
+            kpi.textContent = '$' + overallAvg.toFixed(2);
+        }
 
     } catch (err) {
         console.error('Error loading avg profit chart:', err);
     }
 }
 
-
+// Customers per month chart
 async function loadCustomerChart() {
     try {
         const res = await fetch('/clients/');
@@ -262,32 +312,7 @@ async function loadCustomerChart() {
     }
 }
 
-async function loadTopBudgets() {
-    try {
-        const res = await fetch('/events/');
-        const data = await res.json();
-
-        const sorted = data.sort((a, b) => b.budget - a.budget).slice(0, 5);
-
-        const tbody = document.getElementById('topBudgetsTableBody');
-        tbody.innerHTML = '';
-
-        sorted.forEach(ev => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${ev.title}</td>
-                <td>${ev.budget}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-
-    } catch (err) {
-        console.error('Error loading top budgets:', err);
-    }
-}
-
-
-
+// Income per month chart
 async function loadIncomeChart() {
     try {
         const res = await fetch('/payments/');
@@ -301,7 +326,9 @@ async function loadIncomeChart() {
                 .reduce((sum, p) => sum + p.amount, 0)
         );
 
-        const ctx = document.getElementById('incomeChart').getContext('2d');
+        const canvas = document.getElementById('incomeChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
 
         new Chart(ctx, {
             type: 'line',
@@ -323,8 +350,7 @@ async function loadIncomeChart() {
     }
 }
 
-
-
+// Expenses per month chart
 async function loadExpensesChart() {
     try {
         const res = await fetch('/expenses/');
@@ -338,7 +364,9 @@ async function loadExpensesChart() {
                 .reduce((sum, e) => sum + e.amount, 0)
         );
 
-        const ctx = document.getElementById('expensesChart').getContext('2d');
+        const canvas = document.getElementById('expensesChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
 
         new Chart(ctx, {
             type: 'bar',
@@ -360,7 +388,7 @@ async function loadExpensesChart() {
     }
 }
 
-
+// Events per month by type
 async function loadEventsByTypeChart() {
     try {
         const resEvents = await fetch('/events/');
@@ -369,24 +397,27 @@ async function loadEventsByTypeChart() {
         const resTypes = await fetch('/event-types/');
         const eventTypes = await resTypes.json();
 
-        const typeMap = {};
-        eventTypes.forEach(t => typeMap[t.id] = t.title);
-
-        const months = Array.from({length: 12}, (_, i) => i + 1);
+        const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
         const datasets = eventTypes.map(t => {
-            const dataPerMonth = months.map(m => 
-                events.filter(ev => ev.event_type_id === t.id && new Date(ev.date).getMonth() + 1 === m).length
+            const dataPerMonth = months.map(m =>
+                events.filter(ev =>
+                    ev.event_type_id === t.id &&
+                    new Date(ev.date).getMonth() + 1 === m
+                ).length
             );
 
             return {
                 label: t.title,
                 data: dataPerMonth,
-                backgroundColor: getRandomColor(),
+                backgroundColor: getRandomColor()
             };
         });
 
-        const ctx = document.getElementById('eventsByTypeChart').getContext('2d');
+        const canvas = document.getElementById('eventsByTypeChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
         new Chart(ctx, {
             type: 'bar',
             data: {
@@ -408,38 +439,26 @@ async function loadEventsByTypeChart() {
 }
 
 function getRandomColor() {
-    const r = Math.floor(Math.random()*200);
-    const g = Math.floor(Math.random()*200);
-    const b = Math.floor(Math.random()*200);
+    const r = Math.floor(Math.random() * 200);
+    const g = Math.floor(Math.random() * 200);
+    const b = Math.floor(Math.random() * 200);
     return `rgba(${r},${g},${b},0.6)`;
 }
 
-loadEventsByTypeChart();
-
-async function initCharts() {
-    await loadEventsChart();
-    await loadProfitChart();
-    await loadCustomerChart();
-    await loadAvgProfitChart();
+// Initialise all dashboard components
+async function initDashboard() {
+    await loadEventTypes();
+    await loadEvents();
+    await loadCustomers();
     await loadProfit();
     await loadTopPayments();
     await loadEventDetails();
     await loadTopBudgets();
-    await loadIncomeChart(); 
-    await loadExpensesChart(); 
+    await loadEventsChart();
+    await loadProfitChart();
+    await loadCustomerChart();
+    await loadAvgProfitChart();
+    await loadIncomeChart();
+    await loadExpensesChart();
+    await loadEventsByTypeChart();
 }
-
-initCharts();
-
-
-async function initDashboard() {
-    await loadEventTypes(); 
-    await loadEventDetails();
-}
-
-initDashboard();
-
-
-
-
-

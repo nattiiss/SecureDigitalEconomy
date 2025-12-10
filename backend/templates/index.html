@@ -3,83 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Digital Economy</title>
+    <title>NextGen – Event Innovation</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
 </head>
-<body>
+<body class="theme-dark">
 
-<nav>
-    <ul>
-        <li><a href="{{ url_for('index') }}">HOME</a></li>
-        <li><a href="{{ url_for('about') }}">ABOUT US</a></li>
-        <li><a href="{{ url_for('dashboard') }}">DASHBOARD</a></li>
-        <li><a href="{{ url_for('login') }}">LOGIN</a></li>
-    </ul>
-</nav>
+<header class="site-header">
+    <nav class="navbar">
+        <div class="brand">NextGen</div>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('login') }}" class="nav-cta">Login</a></li>
+        </ul>
+        <button id="themeToggle" class="theme-toggle">🌙</button>
+    </nav>
+</header>
 
-
-    <div class="banner">
-     <img src="{{ url_for('static', filename='assets/pexels-sami-aksu-48867324-13010284.jpg') }}" >
-    <div class="bannerText">
-        <h1>NORDLICHT EVENT GMBH</h1>
+<section class="hero">
+    <div class="hero-content fade-in">
+        <h1>Event Experience, Redefined.</h1>
+        <p>Minimal. Modern. Seamless. Corporate event solutions built for the next generation.</p>
+        <a href="{{ url_for('about') }}" class="btn-primary">Learn more</a>
     </div>
-    </div>
+    <div class="hero-shape"></div>
+</section>
 
+<section class="features section">
+    <h2 class="section-title">What We Deliver</h2>
 
-    </div>
-
-<div class="searchBar">
-    <input type="text" placeholder="Type something..." id="searchInput" class="searchInput">
-</div>
-<div id="searchResults" class="searchResults"></div>
-
-
-
-    <div class="info1">
-        <p>
-             <img class="imgDiv1" src="{{ url_for('static', filename='assets/pexels-abbykihano-431722.jpg') }}" >
-            <br>General information <br></br>
-            Nordlicht Event GmbH is a Vienna-based event service provider specialising in the planning, organisation, and execution of corporate events of all scales.
-            We support leading companies such as A1, Erste Group, Wiener Linien, and international partners with tailored event concepts that combine creativity, precision, and technological expertise.
-            <br></br>
-            Whether it’s large-scale conferences, leadership workshops, product launches, or exclusive corporate gatherings — our team ensures seamless coordination from the first idea to the final implementation.
-            With a strong focus on digital tools and modern communication workflows, we create efficient processes that allow our clients to focus on what matters most: their audience.
-
-        </p>
-    </div>
-
-    <div class="info2">
-        <p>
-            <img class="imgDiv1" src="{{ url_for('static', filename='assets/pexels-hasanalbari-1141678.jpg') }}" >
-            <br>Press Releases <br></br>
-
-            Here you can find recent announcements, project highlights, and updates about our work at Nordlicht Event GmbH Management.
-
-            Our latest activities include:
-
-            successful execution of a 1,500-attendee innovation summit in collaboration with leading Austrian enterprises
-
-            expansion of our digital event-tracking platform for real-time participant management
-
-            partnership agreements with new technology providers to enhance hybrid event capabilities.
-            <br></br>
-            We continuously invest in improving our offerings and exploring new opportunities to support corporate clients in delivering memorable experiences worldwide.
-            <div class="buttonWrapper">
-            <button class="button">Learn More</button>
+    <div class="feature-grid">
+        <div class="feature-card fade-up">
+            <h3>Planning</h3>
+            <p>Reliable project management for events of any scale.</p>
         </div>
+
+        <div class="feature-card fade-up">
+            <h3>Precision</h3>
+            <p>Flawless execution supported by digital workflows.</p>
+        </div>
+
+        <div class="feature-card fade-up">
+            <h3>Innovation</h3>
+            <p>Technology-driven solutions that enhance engagement.</p>
+        </div>
+    </div>
+</section>
+
+<section class="home-section fade-up">
+    <h2>Press Releases</h2>
+
+    <div class="press-card">
+        <h3>NextGen to Launch AI-Powered Event Analytics Suite in Q4 2025</h3>
+        <p class="press-date">Published: February 12, 2025</p>
+        <p>
+            NextGen announced the upcoming release of its intelligent analytics module designed
+            to provide real-time insights into attendee engagement, vendor performance, and
+            cost optimization. The new suite will integrate seamlessly with our core event
+            management platform and extend reporting capabilities for enterprise clients.
         </p>
     </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const input = document.getElementById('searchInput');
-        const resultsDiv = document.getElementById('searchResults');
+    <div class="press-card">
+        <h3>NextGen Expands Operations to Central Europe</h3>
+        <p class="press-date">Published: January 26, 2025</p>
+        <p>
+            To support growing demand in the DACH region, NextGen has opened its new
+            operations hub in Vienna. This expansion strengthens our presence in corporate
+            event logistics and allows faster deployment of talent and resources across
+            major European markets.
+        </p>
+    </div>
 
-        input.addEventListener('input', () => {
-            resultsDiv.innerText = input.value; 
-        });
-    });
-</script>
+    <div class="press-card">
+        <h3>NextGen Partners with EventSec to Enhance On-Site Security Protocols</h3>
+        <p class="press-date">Published: December 4, 2024</p>
+        <p>
+            In response to rising security standards for enterprise events, NextGen has
+            entered a strategic partnership with EventSec, enabling advanced access
+            control, real-time threat monitoring, and integrated compliance documentation
+            for high-profile corporate gatherings.
+        </p>
+    </div>
+</section>
 
+<section class="home-section fade-up">
+    <h2>Recent Events &amp; Highlights</h2>
+
+    <div class="event-card">
+        <h3>Global Innovation Summit – Berlin</h3>
+        <p class="event-date">January 2025</p>
+        <p>
+            NextGen successfully delivered the annual Global Innovation Summit hosting
+            over 1,200 executives and technology leaders. The event featured interactive
+            data visualization booths, a hybrid keynote stage, and automated attendee flow
+            management to ensure smooth transitions between sessions.
+        </p>
+    </div>
+
+    <div class="event-card">
+        <h3>Corporate Finance Leadership Forum – Zurich</h3>
+        <p class="event-date">December 2024</p>
+        <p>
+            Our team coordinated a multi-track conference focusing on financial governance,
+            compliance automation, and market forecasting. The forum included private
+            networking lounges, AI-supported registration flows, and secure digital
+            documentation packages for all participants.
+        </p>
+    </div>
+
+    <div class="event-card">
+        <h3>NextGen Product Experience Week – Vienna HQ</h3>
+        <p class="event-date">November 2024</p>
+        <p>
+            In this internal showcase, NextGen demonstrated new interactive event technologies,
+            including adaptive lighting systems, dynamic stage layouts, and automated
+            communication hubs for enterprise clients. Feedback from attendees will guide
+            the 2025 roadmap.
+        </p>
+    </div>
+</section>
+
+<footer class="footer">
+    <p>© 2025 NextGen Event Management</p>
+</footer>
+
+<script src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
 </html>
