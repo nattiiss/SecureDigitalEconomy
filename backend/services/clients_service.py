@@ -15,8 +15,10 @@ class ClientService:
     def create(data):
         client = Client(
             name=data["name"],
-            email=data["email"]
+            email=data["email"],
+            registered_date=data.get("registered_date")
         )
+
         db.session.add(client)
         db.session.commit()
         return client
@@ -27,6 +29,10 @@ class ClientService:
 
         client.name = data.get("name", client.name)
         client.email = data.get("email", client.email)
+
+        # DO NOT overwrite registered_date unless user explicitly sends a value
+        if "registered_date" in data:
+            client.registered_date = data["registered_date"]
 
         db.session.commit()
         return client

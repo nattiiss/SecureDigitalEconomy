@@ -4,6 +4,13 @@ from database.models import (
     Client, Event, EventType, Payment, PaymentType, Expense, ExpenseType,User
 )
 import random
+from datetime import datetime, timedelta
+
+def random_date(start_year=2024, end_year=2025):
+    start = datetime(start_year, 1, 1)
+    end = datetime(end_year, 12, 31)
+    delta = end - start
+    return start + timedelta(days=random.randint(0, delta.days))
 
 def seed():
     app = create_app()
@@ -34,11 +41,11 @@ def seed():
         db.session.commit()
 
         clients = [
-            Client(name="A1 Telekom", email="contact@A1.at"),
-            Client(name="OEBB Holding", email="office@oebb.at"),
-            Client(name="Red Bull GmbH", email="info@redbull.com"),
-            Client(name="Erste Bank", email="office@erstebank.at"),
-            Client(name="Spar Oesterreich", email="office@spar.at")
+            Client(name="A1 Telekom", email="contact@A1.at", registered_date=random_date().date()),
+            Client(name="OEBB Holding", email="office@oebb.at", registered_date=random_date().date()),
+            Client(name="Red Bull GmbH", email="info@redbull.com", registered_date=random_date().date()),
+            Client(name="Erste Bank", email="office@erstebank.at", registered_date=random_date().date()),
+            Client(name="Spar Oesterreich", email="office@spar.at", registered_date=random_date().date())
         ]
 
         db.session.add_all(clients)

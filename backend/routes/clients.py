@@ -3,17 +3,28 @@ from services.clients_service import ClientService
 
 clients_bp = Blueprint("clients", __name__, url_prefix="/clients")
 
-
 @clients_bp.get("/")
 def get_clients():
     clients = ClientService.get_all()
-    return jsonify([{"id": c.id, "name": c.name, "email": c.email} for c in clients])
-
+    return jsonify([
+        {
+            "id": c.id,
+            "name": c.name,
+            "email": c.email,
+            "registered_date": c.registered_date.isoformat() if c.registered_date else None
+        }
+        for c in clients
+    ])
 
 @clients_bp.get("/<int:id>")
 def get_client(id):
     c = ClientService.get_by_id(id)
-    return {"id": c.id, "name": c.name, "email": c.email}
+    return {
+        "id": c.id,
+        "name": c.name,
+        "email": c.email,
+        "registered_date": c.registered_date.isoformat() if c.registered_date else None
+    }
 
 
 @clients_bp.post("/")
