@@ -22,7 +22,11 @@
             <li><a href="{{ url_for('index') }}">Home</a></li>
             <li><a href="{{ url_for('about') }}">About</a></li>
             <li><a href="{{ url_for('dashboard') }}" class="active">Dashboard</a></li>
-            <li><a href="{{ url_for('login') }}" class="nav-cta">Login</a></li>
+
+            <!-- AUTH UI -->
+            <li id="loginBtn"><a href="{{ url_for('login') }}" class="nav-cta">Login</a></li>
+            <li id="userDisplay" style="display: none;"></li>
+            <li id="logoutBtn" style="display: none;"><a href="#" onclick="logout()">Logout</a></li>
         </ul>
 
         <button id="themeToggle" class="theme-toggle">🌙</button>
@@ -30,121 +34,145 @@
 </header>
 
 <section class="section dashboard">
-    <h1>Management Dashboard</h1>
 
-    <!-- KPI CARDS (keep old functionality, add new Avg KPI) -->
-    <div class="kpi-grid">
-        <div class="kpi-card fade-up">
-            <h3>Events (2025)</h3>
-            <p id="eventsKPI">0</p>
+    <!-- ============================================================
+         MANAGEMENT SECTION
+    ============================================================ -->
+    <div id="managementSection">
+
+        <h1>Management Dashboard</h1>
+
+        <!-- KPI CARDS -->
+        <div class="kpi-grid">
+            <div class="kpi-card fade-up">
+                <h3>Events (2025)</h3>
+                <p id="eventsKPI">0</p>
+            </div>
+
+            <div class="kpi-card fade-up">
+                <h3>Profit (2025)</h3>
+                <p id="profitKPI">$0</p>
+            </div>
+
+            <div class="kpi-card fade-up">
+                <h3>Customers (2025)</h3>
+                <p id="customersKPI">0</p>
+            </div>
+
+            <div class="kpi-card fade-up">
+                <h3>Avg Profit / Customer (2025)</h3>
+                <p id="avgProfitKPI">–</p>
+            </div>
         </div>
 
-        <div class="kpi-card fade-up">
-            <h3>Profit (2025)</h3>
-            <p id="profitKPI">$0</p>
+        <!-- MANAGEMENT CHARTS -->
+        <div class="chart-card fade-up">
+            <h2>Event Number per Month</h2>
+            <canvas id="eventsChart"></canvas>
         </div>
 
-        <div class="kpi-card fade-up">
-            <h3>Customers (2025)</h3>
-            <p id="customersKPI">0</p>
+        <div class="chart-card fade-up">
+            <h2>Profit per Month</h2>
+            <canvas id="profitChart"></canvas>
         </div>
 
-        <div class="kpi-card fade-up">
-            <h3>Avg Profit / Customer (2025)</h3>
-            <p id="avgProfitKPI">–</p>
+        <div class="chart-card fade-up">
+            <h2>Customers per Month</h2>
+            <canvas id="customerChart"></canvas>
         </div>
-    </div>
 
-    <!-- EVENTS & PROFIT -->
-    <div class="chart-card fade-up">
-        <h2>Event Number per Month</h2>
-        <canvas id="eventsChart"></canvas>
-    </div>
+        <div class="chart-card fade-up">
+            <h2>Avg Profit per Customer (2025)</h2>
+            <canvas id="avgProfitChart"></canvas>
+        </div>
 
-    <div class="chart-card fade-up">
-        <h2>Profit per Month</h2>
-        <canvas id="profitChart"></canvas>
-    </div>
+        <!-- TOP PAYMENT SYSTEMS -->
+        <div class="chart-card fade-up">
+            <h2>Top 3 Payment Systems</h2>
+            <table class="payment-table">
+                <thead>
+                <tr>
+                    <th>System</th>
+                    <th>Usage Count</th>
+                </tr>
+                </thead>
+                <tbody id="topPaymentsTableBody"></tbody>
+            </table>
+        </div>
 
-    <div class="chart-card fade-up">
-        <h2>Customers per Month</h2>
-        <canvas id="customerChart"></canvas>
-    </div>
+    </div> <!-- END MANAGEMENT SECTION -->
 
-    <div class="chart-card fade-up">
-        <h2>Avg Profit per Customer (2025)</h2>
-        <canvas id="avgProfitChart"></canvas>
-    </div>
 
-    <div class="chart-card fade-up">
-        <h2>Top 3 Payment Systems</h2>
-        <table class="payment-table">
-            <thead>
-            <tr>
-                <th>System</th>
-                <th>Usage Count</th>
-            </tr>
-            </thead>
-            <tbody id="topPaymentsTableBody"></tbody>
-        </table>
-    </div>
+    <!-- ============================================================
+         EVENT MANAGEMENT SECTION
+    ============================================================ -->
+    <div id="eventMgmtSection">
 
-    <!-- EVENT MANAGEMENT SECTION -->
-    <h1>Event Management</h1>
+        <h1>Event Management</h1>
 
-    <div class="chart-card fade-up">
-        <h2>Events per Month by Type</h2>
-        <canvas id="eventsByTypeChart"></canvas>
-    </div>
+        <div class="chart-card fade-up">
+            <h2>Events per Month by Type</h2>
+            <canvas id="eventsByTypeChart"></canvas>
+        </div>
 
-    <div class="chart-card fade-up">
-        <h2>Event Details</h2>
-        <table class="payment-table">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Type</th>
-                <th>Date</th>
-                <th>Budget</th>
-                <th>Guests</th>
-            </tr>
-            </thead>
-            <tbody id="eventDetailsTableBody"></tbody>
-        </table>
-    </div>
+        <div class="chart-card fade-up">
+            <h2>Event Details</h2>
+            <table class="payment-table">
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Budget</th>
+                    <th>Guests</th>
+                </tr>
+                </thead>
+                <tbody id="eventDetailsTableBody"></tbody>
+            </table>
+        </div>
 
-    <div class="chart-card fade-up">
-        <h2>Top 5 Event Budgets</h2>
-        <table class="payment-table">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Budget</th>
-            </tr>
-            </thead>
-            <tbody id="topBudgetsTableBody"></tbody>
-        </table>
-    </div>
+        <div class="chart-card fade-up">
+            <h2>Top 5 Event Budgets</h2>
+            <table class="payment-table">
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Budget</th>
+                </tr>
+                </thead>
+                <tbody id="topBudgetsTableBody"></tbody>
+            </table>
+        </div>
 
-    <!-- FINANCE SECTION -->
-    <h1>Finance</h1>
+    </div> <!-- END EVENT MANAGEMENT -->
 
-    <div class="chart-card fade-up">
-        <h2>Income per Month</h2>
-        <canvas id="incomeChart"></canvas>
-    </div>
 
-    <div class="chart-card fade-up">
-        <h2>Expenses per Month</h2>
-        <canvas id="expensesChart"></canvas>
-    </div>
+    <!-- =============++++++++======================================
+         FINANCE SECTION
+    ============================================================ -->
+    <div id="financeSection">
+
+        <h1>Finance</h1>
+
+        <div class="chart-card fade-up">
+            <h2>Income per Month</h2>
+            <canvas id="incomeChart"></canvas>
+        </div>
+
+        <div class="chart-card fade-up">
+            <h2>Expenses per Month</h2>
+            <canvas id="expensesChart"></canvas>
+        </div>
+
+    </div> <!-- END FINANCE SECTION -->
+
 </section>
+
 
 <footer class="footer">
     <p>© 2025 NextGen Event Management</p>
 </footer>
 
-<!-- Only main.js is needed; dashboard-specific logic is inside it -->
 <script src="{{ url_for('static', filename='main.js') }}"></script>
 
 </body>

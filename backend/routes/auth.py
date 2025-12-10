@@ -10,7 +10,7 @@ def login():
     POST /auth/login
     Expected JSON:
     { "username": "...", "password": "..." }
-    200- succes, 401- fail
+    200- success, 401- fail
     """
     data = request.json
     username = data.get("username")
@@ -26,6 +26,7 @@ def login():
         "user": {
             "id": user.id,
             "username": user.username,
+            "role": user.role
         }
     })
 
@@ -55,3 +56,4 @@ def me():
         "id": user.id,
         "username": user.username,
     })
+

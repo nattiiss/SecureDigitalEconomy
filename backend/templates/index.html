@@ -18,7 +18,10 @@
             <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
             <li><a href="{{ url_for('about') }}">About</a></li>
             <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
-            <li><a href="{{ url_for('login') }}" class="nav-cta">Login</a></li>
+            <li id="loginBtn"><a href="{{ url_for('login') }}" class="nav-cta">Login</a></li>
+            <li id="userDisplay" style="display: none;"></li>
+            <li id="logoutBtn" style="display: none;"><a href="#" onclick="logout()">Logout</a></li>
+
         </ul>
         <button id="themeToggle" class="theme-toggle">🌙</button>
     </nav>

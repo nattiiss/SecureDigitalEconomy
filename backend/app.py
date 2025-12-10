@@ -13,6 +13,8 @@ import os
 def create_app():
     app = Flask(__name__, static_folder="static", template_folder="templates")
 
+    app.secret_key = "super_secret_key_123"   # REQUIRED for session to work!
+
     db_path = os.path.join(os.path.dirname(__file__), "database", "database.db")
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -43,8 +45,6 @@ def create_app():
     @app.route("/login")
     def login():
         return render_template("login.html")
-
-
 
     return app
 

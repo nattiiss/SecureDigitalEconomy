@@ -120,6 +120,18 @@ def seed():
 
         print("Database is filled!")
 
+        #Users and roles
+        users = [
+            User(username="boss", password="123", role="management"),
+            User(username="events", password="123", role="event-management"),
+            User(username="finance", password="123", role="finances"),
+            User(username="admin", password="123", role="it"),
+        ]
+
+        db.session.add_all(users)
+        db.session.commit()
+        print("User login data is filled!")
+
 # make only once
 if __name__ == "__main__":
     seed()

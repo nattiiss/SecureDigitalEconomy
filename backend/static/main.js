@@ -1,4 +1,5 @@
-// Theme toggle
+// THEME TOGGLE + PAGE INIT
+
 document.addEventListener("DOMContentLoaded", () => {
     const toggle = document.getElementById("themeToggle");
     if (toggle) {
@@ -8,17 +9,130 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    if (document.getElementById("eventsChart")) {
-        initDashboard();
-    }
+    initializePage();
 });
 
-// Dashboard logic
+// PAGE INITIALIZATION (Navbar + Dashboard Access)
 
-// Map for event types
+function initializePage() {
+    updateNavbar();
+
+    const isDashboard = document.getElementById("eventsChart") !== null;
+
+    // Protect dashboard – redirect if not logged in
+    if (isDashboard && !localStorage.getItem("username")) {
+        window.location.href = "/login";
+        return;
+    }
+
+    if (isDashboard) {
+        initDashboard();
+    }
+}
+
+// NAVBAR + LOGOUT
+
+function updateNavbar() {
+    const user = localStorage.getItem("username");
+
+    const loginBtn = document.getElementById("loginBtn");
+    const userDisplay = document.getElementById("userDisplay");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    if (!loginBtn || !userDisplay || !logoutBtn) return;
+
+    if (user) {
+        loginBtn.style.display = "none";
+        userDisplay.style.display = "block";
+        logoutBtn.style.display = "block";
+        userDisplay.innerHTML = `<span style="color: #fff;">${user}</span>`;
+    } else {
+        loginBtn.style.display = "block";
+        userDisplay.style.display = "none";
+        logoutBtn.style.display = "none";
+    }
+}
+
+async function logout() {
+    await fetch("/auth/logout", { method: "POST" });
+
+    localStorage.removeItem("username");
+    localStorage.removeItem("role");
+
+    window.location.href = "/login";
+}
+
+// ROLE-BASED DASHBOARD FILTERING
+
+function filterDashboardByRole() {
+    const role = localStorage.getItem("role");
+
+    const managementSection = document.getElementById("managementSection");
+    const eventMgmtSection = document.getElementById("eventMgmtSection");
+    const financeSection = document.getElementById("financeSection");
+
+    // Hide all by default
+    if (managementSection) managementSection.style.display = "none";
+    if (eventMgmtSection) eventMgmtSection.style.display = "none";
+    if (financeSection) financeSection.style.display = "none";
+
+    if (!role) return;
+
+    // IT — sees everything
+    if (role === "it") {
+        if (managementSection) managementSection.style.display = "block";
+        if (eventMgmtSection) eventMgmtSection.style.display = "block";
+        if (financeSection) financeSection.style.display = "block";
+        return;
+    }
+
+    // MANAGEMENT — sees management + event-management
+    if (role === "management") {
+        if (managementSection) managementSection.style.display = "block";
+        if (eventMgmtSection) eventMgmtSection.style.display = "block";
+        return;
+    }
+
+    // EVENT MANAGEMENT — sees event management only
+    if (role === "event-management") {
+        if (eventMgmtSection) eventMgmtSection.style.display = "block";
+        return;
+    }
+
+    // FINANCES — sees only finance section
+    if (role === "finances") {
+        if (financeSection) financeSection.style.display = "block";
+        return;
+    }
+}
+
+
+// DASHBOARD INIT SEQUENCE
+
 let eventTypesMap = {};
 
-// Load simple KPIs
+async function initDashboard() {
+    await loadEventTypes();
+    await loadEvents();
+    await loadCustomers();
+    await loadProfit();
+    await loadTopPayments();
+    await loadEventDetails();
+    await loadTopBudgets();
+    await loadEventsChart();
+    await loadProfitChart();
+    await loadCustomerChart();
+    await loadAvgProfitChart();
+    await loadIncomeChart();
+    await loadExpensesChart();
+    await loadEventsByTypeChart();
+
+    // Apply role filtering after everything is drawn
+    filterDashboardByRole();
+}
+
+// KPI + TABLE LOADERS
+
 async function loadEvents() {
     try {
         const res = await fetch('/events/');
@@ -29,11 +143,6 @@ async function loadEvents() {
         const kpiElement = document.getElementById('eventsKPI');
         if (kpiElement) {
             kpiElement.innerText = data.length;
-        }
-
-        const listElement = document.getElementById('eventsList');
-        if (listElement) {
-            listElement.innerHTML = data.map(e => `<li>${e.title} - ${e.date}</li>`).join('');
         }
     } catch (err) {
         console.error('Error fetching events:', err);
@@ -67,7 +176,6 @@ async function loadCustomers() {
     }
 }
 
-// Top payment systems
 async function loadTopPayments() {
     try {
         const resPayments = await fetch('/payments/');
@@ -103,7 +211,6 @@ async function loadTopPayments() {
     }
 }
 
-// Event types
 async function loadEventTypes() {
     try {
         const res = await fetch("/event-types/");
@@ -116,7 +223,6 @@ async function loadEventTypes() {
     }
 }
 
-// Event details table
 async function loadEventDetails() {
     try {
         const res = await fetch('/events/');
@@ -141,7 +247,6 @@ async function loadEventDetails() {
     }
 }
 
-// Top budgets table
 async function loadTopBudgets() {
     try {
         const res = await fetch('/events/');
@@ -167,7 +272,8 @@ async function loadTopBudgets() {
     }
 }
 
-// Events per month chart
+// CHARTS
+
 async function loadEventsChart() {
     try {
         const res = await fetch('/events/');
@@ -200,7 +306,6 @@ async function loadEventsChart() {
     }
 }
 
-// Profit per month chart
 async function loadProfitChart() {
     try {
         const res = await fetch('/payments/');
@@ -236,11 +341,10 @@ async function loadProfitChart() {
     }
 }
 
-// Avg profit per customer chart + KPI
 async function loadAvgProfitChart() {
     try {
         const paymentsRes = await fetch('/payments/');
-        const clientsRes = await fetch('/clients');
+        const clientsRes = await fetch('/clients/');
         const payments = await paymentsRes.json();
         const clients = await clientsRes.json();
 
@@ -269,7 +373,7 @@ async function loadAvgProfitChart() {
             });
         }
 
-        // New KPI: overall average profit per customer (2025)
+        // KPI
         const totalProfit = payments.reduce((sum, p) => sum + p.amount, 0);
         const overallAvg = clients.length ? totalProfit / clients.length : 0;
         const kpi = document.getElementById('avgProfitKPI');
@@ -282,20 +386,24 @@ async function loadAvgProfitChart() {
     }
 }
 
-// Customers per month chart
 async function loadCustomerChart() {
     try {
         const res = await fetch('/clients/');
         const data = await res.json();
 
-        const months = Array.from({length:12}, (_,i)=>i+1);
-        const customersPerMonth = months.map(m => data.filter(c => new Date(c.registered_date).getMonth()+1 === m).length);
+        const months = Array.from({ length: 12 }, (_, i) => i + 1);
+        const customersPerMonth = months.map(m =>
+            data.filter(c => new Date(c.registered_date).getMonth() + 1 === m).length
+        );
 
-        const ctx = document.getElementById('customerChart').getContext('2d');
+        const canvas = document.getElementById('customerChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: months.map(m=>'Month '+m),
+                labels: months.map(m => 'Month ' + m),
                 datasets: [{
                     label: 'Customers per Month',
                     data: customersPerMonth,
@@ -304,7 +412,7 @@ async function loadCustomerChart() {
                     fill: true
                 }]
             },
-            options: { responsive:true }
+            options: { responsive: true }
         });
 
     } catch (err) {
@@ -312,7 +420,6 @@ async function loadCustomerChart() {
     }
 }
 
-// Income per month chart
 async function loadIncomeChart() {
     try {
         const res = await fetch('/payments/');
@@ -350,7 +457,6 @@ async function loadIncomeChart() {
     }
 }
 
-// Expenses per month chart
 async function loadExpensesChart() {
     try {
         const res = await fetch('/expenses/');
@@ -388,7 +494,6 @@ async function loadExpensesChart() {
     }
 }
 
-// Events per month by type
 async function loadEventsByTypeChart() {
     try {
         const resEvents = await fetch('/events/');
@@ -443,22 +548,4 @@ function getRandomColor() {
     const g = Math.floor(Math.random() * 200);
     const b = Math.floor(Math.random() * 200);
     return `rgba(${r},${g},${b},0.6)`;
-}
-
-// Initialise all dashboard components
-async function initDashboard() {
-    await loadEventTypes();
-    await loadEvents();
-    await loadCustomers();
-    await loadProfit();
-    await loadTopPayments();
-    await loadEventDetails();
-    await loadTopBudgets();
-    await loadEventsChart();
-    await loadProfitChart();
-    await loadCustomerChart();
-    await loadAvgProfitChart();
-    await loadIncomeChart();
-    await loadExpensesChart();
-    await loadEventsByTypeChart();
 }
