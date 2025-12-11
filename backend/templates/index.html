@@ -36,12 +36,17 @@
     <div class="hero-shape"></div>
 </section>
 
+
 <section class="search-section fade-up">
     <div class="search-container">
-        <input type="text" class="search-input" placeholder="Search events, partners, or insights...">
+        <input type="text" class="search-input" placeholder="Search events, partners, or insights..."
+            oninput="document.getElementById('output').innerHTML = this.value">
         <button class="search-btn">Search</button>
     </div>
+
+    <div id="output" class="search-output"></div>
 </section>
+
 
 <section class="features section">
     <h2 class="section-title">What We Deliver</h2>
@@ -143,5 +148,7 @@
 </footer>
 
 <script src="{{ url_for('static', filename='main.js') }}"></script>
+
+
 </body>
 </html>
