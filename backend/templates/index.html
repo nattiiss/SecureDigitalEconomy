@@ -44,7 +44,7 @@
         <button class="search-btn">Search</button>
     </div>
 
-    <div id="output" class="search-output"></div>
+  <!-- <div id="output" class="search-output"></div> --> 
 </section>
 
 
@@ -148,6 +148,31 @@
 </footer>
 
 <script src="{{ url_for('static', filename='main.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('.search-input');
+
+    function filterCards() {
+        const query = searchInput.value.toLowerCase();
+        const featureCards = document.querySelectorAll('.feature-card');
+        const pressCards = document.querySelectorAll('.press-card');
+        const eventCards = document.querySelectorAll('.event-card');
+
+        const allCards = [...featureCards, ...pressCards, ...eventCards];
+
+        allCards.forEach(card => {
+            const text = card.innerText.toLowerCase();
+            if (text.includes(query)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    searchInput.addEventListener('input', filterCards);
+});
+</script>
 
 
 </body>
