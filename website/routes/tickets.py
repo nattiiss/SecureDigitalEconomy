@@ -77,7 +77,7 @@ def event_management_tickets():
             "id": t.id,
             "type": t.ticket_type.title,
             "title": t.title,
-            "description": t.description,   # ✅ ADD THIS
+            "description": t.description,
             "status": t.status
         }
         for t in tickets
@@ -94,7 +94,7 @@ def it_tickets():
             "id": t.id,
             "type": t.ticket_type.title,
             "title": t.title,
-            "description": t.description,   # ✅ ADD THIS
+            "description": t.description,
             "status": t.status
         }
         for t in tickets

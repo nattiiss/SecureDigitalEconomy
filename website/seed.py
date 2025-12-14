@@ -142,7 +142,7 @@ def seed():
 
         ticket_types = [
         TicketType(title="Book Event"),
-        TicketType(title="Report Issue"),
+        TicketType(title="Report Event Issue"),
         TicketType(title="Report Technical Issue")
         ]
 

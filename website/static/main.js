@@ -225,6 +225,7 @@ async function initDashboard() {
     if (role === "it") {
         loadEventManagementTickets();
         loadITTickets();
+        loadRequestLogs();
     }
 
 }
@@ -788,6 +789,42 @@ async function sendMessage(event) {
     } catch (err) {
         console.error("Ticket submission failed", err);
         alert("Server error while sending ticket");
+    }
+}
+
+async function loadRequestLogs() {
+    const section = document.getElementById("requestLogsSection");
+    const body = document.getElementById("requestLogsBody");
+    if (!section || !body) return;
+
+    try {
+        const res = await fetch("/request-logs/");
+        if (!res.ok) return;
+
+        const logs = await res.json();
+        body.innerHTML = "";
+
+        if (logs.length === 0) {
+            body.innerHTML = `<tr><td colspan="6">No logs available</td></tr>`;
+        } else {
+            logs.forEach(l => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${l.method}</td>
+                    <td>${l.path}</td>
+                    <td>${l.ip_address}</td>
+                    <td>${l.role ?? "-"}</td>
+                    <td>${l.status_code}</td>
+                    <td>${new Date(l.created_at).toLocaleString()}</td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        section.style.display = "block";
+
+    } catch (err) {
+        console.error("Failed to load request logs", err);
     }
 }
 
