@@ -15,6 +15,9 @@ class AuthService:
         session["user_id"] = user.id
         session["role"] = user.role
 
+        if hasattr(user, "client_id") and user.client_id:
+            session["client_id"] = user.client_id
+
         return user
 
     @staticmethod

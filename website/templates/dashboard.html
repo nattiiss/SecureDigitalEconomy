@@ -19,15 +19,32 @@
         <div class="brand">NextGen</div>
 
         <ul class="nav-links">
-            <li><a href="{{ url_for('index') }}">Home</a></li>
-            <li><a href="{{ url_for('about') }}">About</a></li>
-            <li><a href="{{ url_for('dashboard') }}" class="active">Dashboard</a></li>
+            <li id="homeLink"><a href="{{ url_for('index') }}">Home</a></li>
+            <li id="aboutLink"><a href="{{ url_for('about') }}">About</a></li>
 
-            <!-- AUTH UI -->
-            <li id="loginBtn"><a href="{{ url_for('login') }}" class="nav-cta">Login</a></li>
-            <li id="userDisplay" style="display: none;"></li>
-            <li id="logoutBtn" style="display: none;"><a href="#" onclick="logout()">Logout</a></li>
+            <li id="dashboardLink" style="display:none;">
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            </li>
+
+            <li id="accountLink" style="display:none;">
+                <a href="{{ url_for('invoices') }}">My Account</a>
+            </li>
+
+            <li id="contactLink" style="display:none;">
+                <a href="{{ url_for('tickets') }}">Contact Us</a>
+            </li>
+
+            <li id="loginBtn">
+                <a href="{{ url_for('login') }}" class="nav-cta">Login</a>
+            </li>
+
+            <li id="userDisplay" style="display:none;"></li>
+
+            <li id="logoutBtn" style="display:none;">
+                <a href="#" onclick="logout()">Logout</a>
+            </li>
         </ul>
+
 
         <button id="themeToggle" class="theme-toggle">🌙</button>
     </nav>
@@ -144,6 +161,41 @@
             </table>
         </div>
 
+        <!-- ================= TICKETS ================= -->
+
+        <!-- EVENT MANAGEMENT TICKETS -->
+        <div class="chart-card fade-up" id="eventMgmtTickets" style="display:none;">
+            <h2>Event Management Tickets</h2>
+            <table class="payment-table">
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody id="eventMgmtTicketsBody"></tbody>
+            </table>
+        </div>
+
+        <!-- IT TICKETS -->
+        <div class="chart-card fade-up" id="itTickets" style="display:none;">
+            <h2>IT Tickets</h2>
+            <table class="payment-table">
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody id="itTicketsBody"></tbody>
+            </table>
+        </div>
+
+
     </div> <!-- END EVENT MANAGEMENT -->
 
 
@@ -167,6 +219,8 @@
     </div> <!-- END FINANCE SECTION -->
 
 </section>
+
+
 
 
 <footer class="footer">

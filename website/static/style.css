@@ -90,6 +90,11 @@ body {
     color: var(--accent);
 }
 
+.nav-links a:hover,
+.nav-links a.nav-active {
+    color: #635bff;
+}
+
 .nav-cta {
     padding: 8px 16px;
     background: var(--accent);
@@ -105,6 +110,11 @@ body {
     background: none;
     border: none;
     cursor: pointer;
+}
+
+.nav-links li.active a {
+    color: #4fd1c5;
+    text-shadow: 0 0 8px rgba(79, 209, 197, 0.8);
 }
 
 /* --- HERO ---------------------------------------------------------------- */

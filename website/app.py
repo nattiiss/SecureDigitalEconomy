@@ -44,13 +44,22 @@ def create_app():
     def about():
         return render_template("about.html")
 
-    @app.route("/dashboard/")
+    @app.route("/dashboard")
     def dashboard():
         return render_template("dashboard.html")
 
     @app.route("/login")
     def login():
         return render_template("login.html")
+
+    @app.route("/invoices")
+    def invoices():
+        return render_template("invoices.html")
+
+    @app.route("/tickets")
+    def tickets():
+        return render_template("tickets.html")
+
 
     return app
 
