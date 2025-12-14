@@ -1,7 +1,7 @@
 from app import create_app
 from database import db
 from database.models import (
-    Client, Event, EventType, Payment, PaymentType, Expense, ExpenseType,User, Invoice, Ticket, TicketType
+    Client, Event, EventType, Payment, PaymentType, Expense, ExpenseType,User, Invoice, Ticket, TicketType, SimulationState
 )
 import random
 from datetime import datetime, timedelta
@@ -211,6 +211,14 @@ def seed():
 
         db.session.add_all(tickets)
         db.session.commit()
+
+        sim_states = [
+            SimulationState(name="defaced_index.html")
+            ]
+        
+        db.session.add_all(sim_states)
+        db.session.commit()
+        print("Simulation State data is filled!")
 
 
 # make only once

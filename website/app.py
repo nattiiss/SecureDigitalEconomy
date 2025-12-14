@@ -1,5 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, session
 from database import db
+from datetime import datetime
 from routes.clients import clients_bp
 from routes.events import events_bp
 from routes.event_types import event_types_bp
@@ -11,6 +12,10 @@ from routes.auth import auth_bp
 from dashboards.dashboards_routes import dashboard_bp
 from routes.invoices import invoices_bp
 from routes.tickets import ticket_bp
+from routes.injects import injects_bp
+from routes.request_log import request_logs_bp
+from services.inject_service import InjectService
+from database.models.request_logs import RequestLog
 import os
 
 def create_app():
@@ -34,12 +39,16 @@ def create_app():
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(invoices_bp)
     app.register_blueprint(ticket_bp)
+    app.register_blueprint(injects_bp)
+    app.register_blueprint(request_logs_bp)
 
 
     @app.route("/")
     def index():
+        if InjectService.is_active("defaced_index.html"):
+            return render_template("defaced_index.html") # here should be some defaced html
         return render_template("index.html")
-
+    
     @app.route("/about")
     def about():
         return render_template("about.html")
@@ -51,6 +60,29 @@ def create_app():
     @app.route("/login")
     def login():
         return render_template("login.html")
+    
+    @app.after_request
+    def global_request_logger(response):
+        try:
+            log = RequestLog(
+                method=request.method,
+                path=request.path,
+                ip_address=request.remote_addr,
+                payload=str(request.get_json(silent=True)),
+                user_id=session.get("user_id"),
+                role=session.get("role"),
+                status_code=response.status_code,
+                created_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                defaced_flag=0
+            )
+
+            db.session.add(log)
+            db.session.commit()
+        except Exception:
+            pass
+
+        return response
+
 
     return app
 
