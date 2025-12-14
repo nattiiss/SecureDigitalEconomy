@@ -6,9 +6,13 @@ invoices_bp = Blueprint("invoices", __name__, url_prefix="/invoices")
 
 
 @invoices_bp.get("/my")
-@role_required("user")
+@role_required("customer", "it")
 def my_invoices():
     client_id = session.get("client_id")
+
+    if not client_id:
+        return {"error": "Client not linked to user"}, 400
+
     invoices = InvoiceService.get_open_by_client(client_id)
 
     return jsonify([
@@ -16,7 +20,6 @@ def my_invoices():
             "id": i.id,
             "invoice_number": i.invoice_number,
             "amount_total": i.amount_total,
-            "amount_paid": i.amount_paid,
             "status": i.status,
             "due_date": i.due_date
         }
@@ -25,7 +28,7 @@ def my_invoices():
 
 
 @invoices_bp.get("/")
-@role_required("management")
+@role_required("it")
 def all_invoices():
     invoices = InvoiceService.get_all()
 
@@ -42,7 +45,7 @@ def all_invoices():
 
 
 @invoices_bp.post("/<int:invoice_id>/pay")
-@role_required("management")
+@role_required("it")
 def pay_invoice(invoice_id):
     invoice = InvoiceService.mark_paid(invoice_id)
     if not invoice:

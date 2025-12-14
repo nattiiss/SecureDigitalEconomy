@@ -1,6 +1,17 @@
-// THEME TOGGLE + PAGE INIT
+// PAGE INIT
 
 document.addEventListener("DOMContentLoaded", () => {
+    setupThemeToggle();
+    updateNavbar();
+    guardInvoicesPage();
+    initializePage();
+    setActiveNavLink();
+});
+
+
+// PAGE INITIALIZATION (Navbar + Dashboard Access)
+
+function setupThemeToggle() {
     const toggle = document.getElementById("themeToggle");
     if (toggle) {
         toggle.addEventListener("click", () => {
@@ -8,16 +19,40 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.classList.toggle("theme-dark");
         });
     }
+}
 
-    initializePage();
-});
+function setActiveNavLink() {
+    const path = window.location.pathname;
 
-// PAGE INITIALIZATION (Navbar + Dashboard Access)
+    const linkMap = {
+        "/": "homeLink",
+        "/about": "aboutLink",
+        "/dashboard": "dashboardLink",
+        "/invoices": "accountLink",
+        "/tickets": "contactLink"
+    };
+
+    // Remove active class from all nav links
+    const allNavAnchors = document.querySelectorAll(".nav-links a");
+    allNavAnchors.forEach(a => a.classList.remove("nav-active"));
+
+    const activeLiId = linkMap[path];
+    if (!activeLiId) return;
+
+    const activeLi = document.getElementById(activeLiId);
+    if (!activeLi) return;
+
+    const activeAnchor = activeLi.querySelector("a");
+    if (activeAnchor) activeAnchor.classList.add("nav-active");
+}
+
 
 function initializePage() {
     updateNavbar();
 
+    const path = window.location.pathname.replace(/\/$/, "");
     const isDashboard = document.getElementById("eventsChart") !== null;
+    const isInvoices = path === "/invoices";
 
     // Protect dashboard – redirect if not logged in
     if (isDashboard && !localStorage.getItem("username")) {
@@ -28,30 +63,82 @@ function initializePage() {
     if (isDashboard) {
         initDashboard();
     }
+
+    if (isInvoices) {
+        loadMyInvoices();
+    }
+}
+
+
+function guardInvoicesPage() {
+    const path = window.location.pathname;
+    const isInvoicesPage = (path === "/invoices");
+    if (!isInvoicesPage) return;
+
+    const user = localStorage.getItem("username");
+    const role = localStorage.getItem("role");
+
+    // Not logged in -> go login
+    if (!user || !role) {
+        window.location.href = "/login";
+        return;
+    }
+
+    // Employees are not allowed
+    const employeeRoles = ["management", "event-management", "finances"];
+    if (employeeRoles.includes(role)) {
+        window.location.href = "/";
+    }
 }
 
 // NAVBAR + LOGOUT
 
 function updateNavbar() {
     const user = localStorage.getItem("username");
+    const role = localStorage.getItem("role");
 
     const loginBtn = document.getElementById("loginBtn");
     const userDisplay = document.getElementById("userDisplay");
     const logoutBtn = document.getElementById("logoutBtn");
 
-    if (!loginBtn || !userDisplay || !logoutBtn) return;
+    const dashboardLink = document.getElementById("dashboardLink");
+    const accountLink = document.getElementById("accountLink");
+    const contactLink = document.getElementById("contactLink");
 
-    if (user) {
-        loginBtn.style.display = "none";
-        userDisplay.style.display = "block";
-        logoutBtn.style.display = "block";
-        userDisplay.innerHTML = `<span style="color: #fff;">${user}</span>`;
-    } else {
-        loginBtn.style.display = "block";
-        userDisplay.style.display = "none";
-        logoutBtn.style.display = "none";
+    // 1) Base login UI
+    if (loginBtn) loginBtn.style.display = user ? "none" : "block";
+
+    if (userDisplay) {
+        userDisplay.style.display = user ? "block" : "none";
+        if (user) userDisplay.innerHTML = `<span style="color:#fff;">${user}</span>`;
+    }
+
+    if (logoutBtn) logoutBtn.style.display = user ? "block" : "none";
+
+    // 2) Default: hide special links, then enable per role
+    if (dashboardLink) dashboardLink.style.display = "none";
+    if (accountLink) accountLink.style.display = "none";
+
+    // 3) Contact Us is ALWAYS visible (everyone)
+    if (contactLink) contactLink.style.display = "block";
+
+    // If not logged in, stop here (no dashboard, no account)
+    if (!user || !role) return;
+
+    // 4) Dashboard visibility:
+    // Employees + IT see dashboard. Customer does not.
+    const employeeRoles = ["management", "event-management", "finances"];
+    if (dashboardLink && (employeeRoles.includes(role) || role === "it")) {
+        dashboardLink.style.display = "block";
+    }
+
+    // 5) My Account visibility:
+    // Only customer + IT can see it. Employees must not.
+    if (accountLink && (role === "customer" || role === "it")) {
+        accountLink.style.display = "block";
     }
 }
+
 
 async function logout() {
     await fetch("/auth/logout", { method: "POST" });
@@ -129,6 +216,17 @@ async function initDashboard() {
 
     // Apply role filtering after everything is drawn
     filterDashboardByRole();
+    const role = localStorage.getItem("role");
+
+    if (role === "event-management" || role === "management") {
+        loadEventManagementTickets();
+    }
+
+    if (role === "it") {
+        loadEventManagementTickets();
+        loadITTickets();
+    }
+
 }
 
 // KPI + TABLE LOADERS
@@ -457,6 +555,58 @@ async function loadIncomeChart() {
     }
 }
 
+async function loadMyInvoices() {
+    const table = document.getElementById("paymentsTable");
+    if (!table) return;
+
+    try {
+        const res = await fetch("/invoices/my");
+
+        if (!res.ok) {
+            table.innerHTML = `
+                <tr>
+                    <td colspan="3" style="text-align:center;color:#999;">
+                        No invoices available
+                    </td>
+                </tr>`;
+            return;
+        }
+
+        const invoices = await res.json();
+
+        if (invoices.length === 0) {
+            table.innerHTML = `
+                <tr>
+                    <td colspan="3" style="text-align:center;color:#999;">
+                        No open invoices
+                    </td>
+                </tr>`;
+            return;
+        }
+
+        table.innerHTML = "";
+
+        invoices.forEach(inv => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${inv.invoice_number}</td>
+                <td>${inv.due_date ?? "-"}</td>
+                <td>$${inv.amount_total.toFixed(2)}</td>
+            `;
+            table.appendChild(tr);
+        });
+
+    } catch (err) {
+        console.error("Failed to load invoices", err);
+        table.innerHTML = `
+            <tr>
+                <td colspan="3" style="text-align:center;color:#999;">
+                    Error loading invoices
+                </td>
+            </tr>`;
+    }
+}
+
 async function loadExpensesChart() {
     try {
         const res = await fetch('/expenses/');
@@ -542,6 +692,105 @@ async function loadEventsByTypeChart() {
         console.error('Error loading Events by Type chart:', err);
     }
 }
+
+async function loadEventManagementTickets() {
+    const section = document.getElementById("eventMgmtTickets");
+    const body = document.getElementById("eventMgmtTicketsBody");
+    if (!section || !body) return;
+
+    const res = await fetch("/ticket/event-management");
+    const tickets = await res.json();
+
+    body.innerHTML = "";
+
+    if (tickets.length === 0) {
+        body.innerHTML = `<tr><td colspan="3">No tickets</td></tr>`;
+    } else {
+        tickets.forEach(t => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${t.title}</td>
+                <td>${t.type}</td>
+                <td style="max-width:400px; color:#bdbdbd;">${t.description || "-"}</td>
+                <td>${t.status}</td>
+            `;
+            body.appendChild(tr);
+        });
+    }
+
+    section.style.display = "block";
+}
+
+async function loadITTickets() {
+    const section = document.getElementById("itTickets");
+    const body = document.getElementById("itTicketsBody");
+    if (!section || !body) return;
+
+    const res = await fetch("/ticket/it");
+    const tickets = await res.json();
+
+    body.innerHTML = "";
+
+    if (tickets.length === 0) {
+        body.innerHTML = `<tr><td colspan="3">No tickets</td></tr>`;
+    } else {
+        tickets.forEach(t => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${t.title}</td>
+                <td>${t.type}</td>
+                <td style="max-width:400px; color:#bdbdbd;">${t.description || "-"}</td>
+                <td>${t.status}</td>
+            `;
+            body.appendChild(tr);
+        });
+    }
+
+    section.style.display = "block";
+}
+
+async function sendMessage(event) {
+    event.preventDefault();
+
+    const categoryEl = document.getElementById("category");
+    const titleEl = document.getElementById("title");
+    const messageEl = document.getElementById("message");
+
+    if (!categoryEl || !titleEl || !messageEl) {
+        console.error("Contact form elements not found");
+        return;
+    }
+
+    const payload = {
+        category: categoryEl.value,      // book | event | tech
+        title: titleEl.value.trim(),
+        message: messageEl.value.trim()
+    };
+
+    try {
+        const res = await fetch("/ticket", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            alert(err.error || "Failed to send ticket");
+            return;
+        }
+
+        alert("Ticket submitted successfully!");
+        event.target.reset();
+
+    } catch (err) {
+        console.error("Ticket submission failed", err);
+        alert("Server error while sending ticket");
+    }
+}
+
 
 function getRandomColor() {
     const r = Math.floor(Math.random() * 200);

@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login – NextGen</title>
+    <title>My Account – NextGen</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
 </head>
 <body class="theme-dark">
 
@@ -45,44 +44,42 @@
     </nav>
 </header>
 
-<script>
-    async function login() {
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
+<section class="section dashboard fade-in">
+    <h1>My Account</h1>
 
-        const res = await fetch("/auth/login", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ username, password })
-        });
-
-        const data = await res.json();
-
-        if (res.status !== 200) {
-            alert("Invalid credentials");
-            return;
-        }
-
-        // Store role so dashboard can filter charts
-        localStorage.setItem("username", data.user.username);
-        localStorage.setItem("role", data.user.role);
-
-        // Go to dashboard
-        window.location.href = "/dashboard";
-    }
-</script>
-
-<div class="login-container fade-in">
-    <div class="login-box">
-        <h2>Login</h2>
-
-        <form onsubmit="event.preventDefault(); login();">
-            <input type="text" id="username" placeholder="Username" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <button type="submit" class="btn-primary">Login</button>
-        </form>
+    <div class="chart-card fade-up">
+        <h2>Payment Information</h2>
+        <p><strong>IBAN:</strong> <span id="IBAN">AT99 1999 2025 1991 0000</span></p>
     </div>
-</div>
+
+<!--    <div class="chart-card fade-up">-->
+<!--        <h2>My Events</h2>-->
+<!--        <table class="payment-table">-->
+<!--            <thead>-->
+<!--            <tr>-->
+<!--                <th>Title</th>-->
+<!--                <th>Date</th>-->
+<!--                <th>Budget</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--            <tbody id="eventsTable"></tbody>-->
+<!--        </table>-->
+<!--    </div>-->
+
+    <div class="chart-card fade-up">
+        <h2>Payments</h2>
+        <table class="payment-table">
+            <thead>
+            <tr>
+                <th>Invoice</th>
+                <th>Date</th>
+                <th>Amount</th>
+            </tr>
+            </thead>
+            <tbody id="paymentsTable"></tbody>
+        </table>
+    </div>
+</section>
 
 <footer class="footer">
     <p>© 2025 NextGen Event Management</p>

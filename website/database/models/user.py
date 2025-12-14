@@ -7,3 +7,4 @@ class User(db.Model):
     username = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(120))   # plain text is OK for this assignment
     role = db.Column(db.String(50))        # management, event-management, finances, it, customer
+    client_id = db.Column(db.Integer, db.ForeignKey("clients.id"), nullable=True)

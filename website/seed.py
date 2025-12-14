@@ -133,8 +133,7 @@ def seed():
             User(username="events", password="123", role="event-management"),
             User(username="finance", password="123", role="finances"),
             User(username="admin", password="123", role="it"),
-            User(username="customer", password="123", role="customer")
-           
+            User(username="A1", password="123", role="customer", client_id=clients[0].id)
         ]
 
         db.session.add_all(users)
@@ -143,7 +142,8 @@ def seed():
 
         ticket_types = [
         TicketType(title="Book Event"),
-        TicketType(title="Report Issue")
+        TicketType(title="Report Issue"),
+        TicketType(title="Report Technical Issue")
         ]
 
         db.session.add_all(ticket_types)

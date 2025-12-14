@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About – NextGen</title>
+    <title>Contact Support – NextGen</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet"
@@ -45,48 +45,48 @@
     </nav>
 </header>
 
-<section class="section about">
-    <h1>We are the Event!</h1>
+<!-- MAIN CONTENT -->
+<section class="section fade-up">
+    <h1 class="section-title">Contact Support</h1>
 
-    <div class="about-grid">
-        <div>
-            <h2>Who We Are</h2>
-            <p>NextGen is a Vienna-based event solutions provider specializing in corporate events through modern design, efficient planning, and seamless execution.</p>
-        </div>
+    <p style="text-align:center; max-width:720px; margin:0 auto 40px; color:#bdbdbd;">
+        Use the form below to contact our team. Requests are automatically routed to the
+        appropriate department.
+    </p>
 
-        <div>
-            <h2>Our Mission</h2>
-            <p>We turn events into strategic communication tools that create impact and connection.</p>
-        </div>
+    <!-- FORM CARD -->
+    <div class="search-section fade-up" style="max-width:800px; margin:0 auto;">
+        <div class="search-container" style="flex-direction:column; gap:16px;">
+            <form onsubmit="sendMessage(event)" style="width:100%; display:flex; flex-direction:column; gap:16px;">
 
-        <div>
-            <h2>What We Do</h2>
-            <p>Consulting, logistics, participant management, hybrid event tech, and end-to-end coordination.</p>
-        </div>
+                <div style="display:flex; gap:16px;">
+                    <select id="category" class="search-input" required>
+                        <option value="book">Book Event</option>
+                        <option value="event">Report Event Issue</option>
+                        <option value="tech">Report Technical Issue</option>
+                    </select>
 
-        <div>
-            <h2>Our Approach</h2>
-            <p>Transparency, digital workflows, agile processes, and measurable outcomes.</p>
+                    <input id="title"
+                           class="search-input"
+                           placeholder="Title"
+                           required>
+                </div>
+
+                <textarea id="message"
+                          class="search-input"
+                          rows="5"
+                          placeholder="Describe your request"
+                          required></textarea>
+
+                <div style="text-align:right;">
+                    <button type="submit" class="btn-primary">
+                        Send Message
+                    </button>
+                </div>
+
+            </form>
         </div>
     </div>
-
-    <br><br>
-
-    <h2>About NextGen Event Management</h2>
-    <br>
-    <p>
-        NextGen specializes in high-impact corporate event solutions designed for enterprises that
-        value precision, innovation, and measurable results. Our team manages the entire event lifecycle
-        – from planning and budgeting to logistics, analytics, and stakeholder reporting – delivering
-        seamless experiences across Europe.
-    </p>
-
-    <p>
-        Our mission is to redefine corporate engagement by combining data-driven strategy, modern
-        design principles, and scalable execution frameworks. Whether hosting an investor summit,
-        annual corporate meeting, product reveal, or international partner gathering, NextGen ensures
-        flawless delivery backed by transparent performance metrics.
-    </p>
 </section>
 
 <footer class="footer">
