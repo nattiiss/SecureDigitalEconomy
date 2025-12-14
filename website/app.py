@@ -8,6 +8,9 @@ from routes.payment_types import payment_types_bp
 from routes.expenses import expenses_bp
 from routes.expense_types import expense_types_bp
 from routes.auth import auth_bp
+from dashboards.dashboards_routes import dashboard_bp
+from routes.invoices import invoices_bp
+from routes.tickets import ticket_bp
 import os
 
 def create_app():
@@ -28,6 +31,9 @@ def create_app():
     app.register_blueprint(expenses_bp)
     app.register_blueprint(expense_types_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(dashboard_bp)
+    app.register_blueprint(invoices_bp)
+    app.register_blueprint(ticket_bp)
 
 
     @app.route("/")

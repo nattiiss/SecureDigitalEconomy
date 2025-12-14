@@ -13,7 +13,7 @@ def events_per_month():
 
 
 @dashboard_bp.get("/management/profit-per-month")
-@role_required("management")
+#@role_required("management")
 def profit_per_month():
     return jsonify(DashboardService.profit_per_month())
 

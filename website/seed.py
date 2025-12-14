@@ -1,7 +1,7 @@
 from app import create_app
 from database import db
 from database.models import (
-    Client, Event, EventType, Payment, PaymentType, Expense, ExpenseType,User
+    Client, Event, EventType, Payment, PaymentType, Expense, ExpenseType,User, Invoice, Ticket, TicketType
 )
 import random
 from datetime import datetime, timedelta
@@ -133,11 +133,85 @@ def seed():
             User(username="events", password="123", role="event-management"),
             User(username="finance", password="123", role="finances"),
             User(username="admin", password="123", role="it"),
+            User(username="customer", password="123", role="customer")
+           
         ]
 
         db.session.add_all(users)
         db.session.commit()
         print("User login data is filled!")
+
+        ticket_types = [
+        TicketType(title="Book Event"),
+        TicketType(title="Report Issue")
+        ]
+
+        db.session.add_all(ticket_types)
+        db.session.commit()
+
+        invoices = [
+            Invoice(
+                invoice_number="INV-2025-001",
+                client_id=clients[0].id,
+                event_id=events[0].id,
+                amount_total=12000,
+                status="open",
+                issue_date="2025-03-01",
+                due_date="2025-03-31"
+            ),
+            Invoice(
+                invoice_number="INV-2025-002",
+                client_id=clients[1].id,
+                event_id=events[1].id,
+                amount_total=18000,
+                status="paid",
+                issue_date="2025-02-01",
+                due_date="2025-02-28"
+            ),
+            Invoice(
+                invoice_number="INV-2025-003",
+                client_id=clients[2].id,
+                event_id=None,
+                amount_total=7500,
+                status="open",
+                issue_date="2025-04-10",
+                due_date="2025-04-30"
+            )
+        ]
+
+        db.session.add_all(invoices)
+        db.session.commit()
+
+        tickets = [
+            Ticket(
+                client_id=clients[0].id,
+                ticket_type_id=ticket_types[0].id,
+                title="Request new strategy workshop",
+                description="We would like to organize a workshop in June for our management team.",
+                status="open",
+                created_at="2025-04-12"
+            ),
+            Ticket(
+                client_id=clients[1].id,
+                ticket_type_id=ticket_types[1].id,
+                title="Incorrect budget shown in dashboard",
+                description="The dashboard shows a wrong budget for our last event. Please investigate.",
+                status="open",
+                created_at="2025-04-14"
+            ),
+            Ticket(
+                client_id=clients[2].id,
+                ticket_type_id=ticket_types[1].id,
+                title="Invoice amount seems incorrect",
+                description="The invoice amount does not match our agreement.",
+                status="in_progress",
+                created_at="2025-04-15"
+            )
+        ]
+
+        db.session.add_all(tickets)
+        db.session.commit()
+
 
 # make only once
 if __name__ == "__main__":
