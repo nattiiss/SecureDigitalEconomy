@@ -7,7 +7,6 @@ class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     client_id = db.Column(db.Integer, db.ForeignKey("clients.id"))
-    #event_id = db.Column(db.Integer, db.ForeignKey("events.id"))
 
     ticket_type_id = db.Column(db.Integer, db.ForeignKey("ticket_types.id"))
 

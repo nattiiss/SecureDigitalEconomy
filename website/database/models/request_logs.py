@@ -12,9 +12,8 @@ class RequestLog(db.Model):
 
     payload = db.Column(db.Text)      
 
-    user_id = db.Column(db.Integer, nullable=True)
+    user_name = db.Column(db.String(100), nullable=True)
     role = db.Column(db.String(50), nullable=True)
 
     status_code = db.Column(db.Integer)
     created_at = db.Column(db.String(30))
-    defaced_flag = db.Column(db.Integer, default= 0)

@@ -46,11 +46,13 @@ def create_app():
     @app.route("/")
     def index():
         if InjectService.is_active("defaced_index.html"):
-            return render_template("defaced_index.html") # here should be some defaced html
+            return render_template("defaced_index.html")
         return render_template("index.html")
     
     @app.route("/about")
     def about():
+        if InjectService.is_active("defaced_about.html"):
+            return render_template("defaced_about.html")
         return render_template("about.html")
 
     @app.route("/dashboard")
@@ -69,11 +71,10 @@ def create_app():
                 path=request.path,
                 ip_address=request.remote_addr,
                 payload=str(request.get_json(silent=True)),
-                user_id=session.get("user_id"),
+                user_name=session.get("user_name"),
                 role=session.get("role"),
                 status_code=response.status_code,
                 created_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                defaced_flag=0
             )
 
             db.session.add(log)
@@ -86,10 +87,14 @@ def create_app():
 
     @app.route("/invoices")
     def invoices():
+        if InjectService.is_active("defaced_invoices.html"):
+            return render_template("defaced_invoices.html")
         return render_template("invoices.html")
 
     @app.route("/tickets")
     def tickets():
+        if InjectService.is_active("defaced_tickets.html"):
+              return render_template("defaced_tickets.html")
         return render_template("tickets.html")
 
 

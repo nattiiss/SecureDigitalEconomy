@@ -1,10 +1,12 @@
 from flask import Blueprint, request, jsonify
 from services.payments_service import PaymentService
+from utils.role_required import role_required
 
 payments_bp = Blueprint("payments", __name__, url_prefix="/payments")
 
 
 @payments_bp.get("/")
+@role_required("it","management","customer","event-management","finances")
 def get_payments():
     payments = PaymentService.get_all()
     return jsonify([
@@ -21,6 +23,7 @@ def get_payments():
 
 
 @payments_bp.get("/<int:payment_id>")
+@role_required("it","management","customer","event-management","finances")
 def get_payment(payment_id):
     p = PaymentService.get_by_id(payment_id)
     return {
@@ -34,6 +37,7 @@ def get_payment(payment_id):
 
 
 @payments_bp.post("/")
+@role_required("it","management","customer","event-management","finances")
 def create_payment():
     data = request.json
     p = PaymentService.create(data)
@@ -41,6 +45,7 @@ def create_payment():
 
 
 @payments_bp.put("/<int:payment_id>")
+@role_required("it","management","customer","event-management","finances")
 def update_payment(payment_id):
     data = request.json
     PaymentService.update(payment_id, data)
@@ -48,6 +53,7 @@ def update_payment(payment_id):
 
 
 @payments_bp.delete("/<int:payment_id>")
+@role_required("it","management","customer","event-management","finances")
 def delete_payment(payment_id):
     PaymentService.delete(payment_id)
     return {"message": "Payment deleted"}

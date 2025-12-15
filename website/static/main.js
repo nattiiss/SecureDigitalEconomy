@@ -224,7 +224,6 @@ async function initDashboard() {
 
     if (role === "it") {
         loadEventManagementTickets();
-        loadITTickets();
         loadRequestLogs();
     }
 
@@ -722,33 +721,6 @@ async function loadEventManagementTickets() {
     section.style.display = "block";
 }
 
-async function loadITTickets() {
-    const section = document.getElementById("itTickets");
-    const body = document.getElementById("itTicketsBody");
-    if (!section || !body) return;
-
-    const res = await fetch("/ticket/it");
-    const tickets = await res.json();
-
-    body.innerHTML = "";
-
-    if (tickets.length === 0) {
-        body.innerHTML = `<tr><td colspan="3">No tickets</td></tr>`;
-    } else {
-        tickets.forEach(t => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td>${t.title}</td>
-                <td>${t.type}</td>
-                <td style="max-width:400px; color:#bdbdbd;">${t.description || "-"}</td>
-                <td>${t.status}</td>
-            `;
-            body.appendChild(tr);
-        });
-    }
-
-    section.style.display = "block";
-}
 
 async function sendMessage(event) {
     event.preventDefault();
@@ -763,7 +735,7 @@ async function sendMessage(event) {
     }
 
     const payload = {
-        category: categoryEl.value,      // book | event | tech
+        category: categoryEl.value,      // book | event
         title: titleEl.value.trim(),
         message: messageEl.value.trim()
     };
@@ -812,7 +784,9 @@ async function loadRequestLogs() {
                 tr.innerHTML = `
                     <td>${l.method}</td>
                     <td>${l.path}</td>
+                    <td>${l.payload}</td>
                     <td>${l.ip_address}</td>
+                    <td>${l.user_name ?? "-"}</td>
                     <td>${l.role ?? "-"}</td>
                     <td>${l.status_code}</td>
                     <td>${new Date(l.created_at).toLocaleString()}</td>
@@ -827,6 +801,98 @@ async function loadRequestLogs() {
         console.error("Failed to load request logs", err);
     }
 }
+
+async function sendDefacedMessage(event) {
+    event.preventDefault();
+
+    const category = document.getElementById("category").value;
+    const title = document.getElementById("title").value.trim();
+    const message = document.getElementById("message").value.trim();
+
+    if (!category || !title || !message) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    // Store original ticket data temporarily
+    window._pendingTicket = { category, title, message };
+
+    showPhishingPopup();
+}
+
+function showPhishingPopup() {
+    const modal = document.createElement("div");
+    modal.id = "phishingModal";
+    modal.style = `
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    `;
+
+    modal.innerHTML = `
+        <div style="
+            background: #111;
+            padding: 24px;
+            border-radius: 12px;
+            width: 400px;
+            color: white;
+        ">
+            <h3>Payment Verification Required</h3>
+            <p style="font-size:14px;">
+                Due to unusual booking activity, please verify your payment
+                method to continue.
+            </p>
+
+            <select id="cardType" class="search-input" style="margin-bottom:10px;">
+                <option value="">Card Type</option>
+                <option value="visa">Visa</option>
+                <option value="mastercard">Mastercard</option>
+            </select>
+
+            <input id="cardLast4"
+                   class="search-input"
+                   placeholder="Last 4 digits of card"
+                   maxlength="4"
+                   style="margin-bottom:10px;">
+
+            <input id="cardHolder"
+                   class="search-input"
+                   placeholder="Cardholder name"
+                   style="margin-bottom:16px;">
+
+            <div style="text-align:right;">
+                <button class="btn-primary" onclick="submitPhishingPopup()">
+                    Verify
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+}
+
+function submitPhishingPopup() {
+    const cardType = document.getElementById("cardType").value;
+    const last4 = document.getElementById("cardLast4").value;
+    const holder = document.getElementById("cardHolder").value;
+
+    if (!cardType || last4.length !== 4 || !holder) {
+        alert("Please complete verification");
+        return;
+    }
+
+    document.getElementById("phishingModal").remove();
+
+    // Fake success
+    alert("Ticket submitted successfully!");
+}
+
+
+
 
 
 function getRandomColor() {

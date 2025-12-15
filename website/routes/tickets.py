@@ -4,9 +4,8 @@ from utils.role_required import role_required
 
 ticket_bp = Blueprint("ticket", __name__, url_prefix="/ticket")
 
-
+#left this one open for fake booking inject
 @ticket_bp.post("/")
-@role_required("customer", "it")
 def create_ticket():
     data = request.json
     client_id = session.get("client_id")
@@ -22,7 +21,7 @@ def create_ticket():
 
 
 @ticket_bp.get("/my")
-@role_required("customer", "it")
+@role_required("customer", "it","event_management","management")
 def my_tickets():
     client_id = session.get("client_id")
     tickets = TicketService.get_by_client(client_id)
@@ -39,7 +38,7 @@ def my_tickets():
 
 
 @ticket_bp.get("/")
-@role_required("management", "it")
+@role_required("customer", "it","event_management","management")
 def all_tickets():
     tickets = TicketService.get_all()
 
@@ -56,7 +55,7 @@ def all_tickets():
 
 
 @ticket_bp.put("/<int:ticket_id>/status")
-@role_required("management", "it")
+@role_required("customer", "it","event_management","management")
 def update_ticket_status(ticket_id):
     data = request.json
     ticket = TicketService.update_status(ticket_id, data["status"])
@@ -68,7 +67,7 @@ def update_ticket_status(ticket_id):
 
 
 @ticket_bp.get("/event-management")
-@role_required("event-management", "management", "it")
+@role_required("customer", "it","event_management","management")
 def event_management_tickets():
     tickets = TicketService.get_event_management_tickets()
 
@@ -85,7 +84,7 @@ def event_management_tickets():
 
 
 @ticket_bp.get("/it")
-@role_required("it")
+@role_required("customer", "it","event_management","management")
 def it_tickets():
     tickets = TicketService.get_it_tickets()
 

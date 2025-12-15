@@ -12,6 +12,7 @@ class AuthService:
             return None
 
         # store in session
+        session["user_name"] = user.username
         session["user_id"] = user.id
         session["role"] = user.role
 

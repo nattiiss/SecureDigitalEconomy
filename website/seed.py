@@ -116,24 +116,24 @@ def seed():
         db.session.add_all(expenses)
         db.session.commit()
 
-        users = [
-        User(username="test1", password="test123"),
-        User(username="test2", password="test123"),
-        ]
-
-        db.session.add_all(users)
-        db.session.commit()
-
-
         print("Database is filled!")
 
         #Users and roles
         users = [
-            User(username="boss", password="123", role="management"),
-            User(username="events", password="123", role="event-management"),
-            User(username="finance", password="123", role="finances"),
-            User(username="admin", password="123", role="it"),
-            User(username="A1", password="123", role="customer", client_id=clients[0].id)
+            User(username="management_worker1", password="123", role="management"),
+            User(username="management_worker2", password="123", role="management"),
+            User(username="events_worker1", password="123", role="event-management"),
+            User(username="events_worker2", password="123", role="event-management"),
+            User(username="events_worker3", password="123", role="event-management"),
+            User(username="finance_worker1", password="123", role="finances"),
+            User(username="finance_worker2", password="123", role="finances"),
+            User(username="admin1", password="123", role="it"),
+            User(username="admin2", password="123", role="it"),
+            User(username="admin3", password="123", role="it"),
+            User(username="admin4", password="123", role="it"),
+            User(username="A1_manager", password="123", role="customer", client_id=clients[0].id),
+            User(username="OEBB_manager", password="123", role="customer", client_id=clients[1].id),
+            User(username="Erste_manager", password="123", role="customer", client_id=clients[2].id),
         ]
 
         db.session.add_all(users)
@@ -143,7 +143,7 @@ def seed():
         ticket_types = [
         TicketType(title="Book Event"),
         TicketType(title="Report Event Issue"),
-        TicketType(title="Report Technical Issue")
+
         ]
 
         db.session.add_all(ticket_types)
@@ -213,7 +213,10 @@ def seed():
         db.session.commit()
 
         sim_states = [
-            SimulationState(name="defaced_index.html")
+            SimulationState(name="defaced_index.html"),
+            SimulationState(name="defaced_about.html"),
+            SimulationState(name="defaced_invoices.html"),
+            SimulationState(name="defaced_tickets.html")
             ]
         
         db.session.add_all(sim_states)
