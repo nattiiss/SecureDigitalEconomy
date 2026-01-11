@@ -6,7 +6,7 @@ invoices_bp = Blueprint("invoices", __name__, url_prefix="/invoices")
 
 
 @invoices_bp.get("/my")
-@role_required("customer", "it","event_management")
+@role_required("customer", "it","event-management")
 def my_invoices():
     client_id = session.get("client_id")
 
@@ -28,7 +28,7 @@ def my_invoices():
 
 
 @invoices_bp.get("/")
-@role_required("customer", "it","event_management")
+@role_required("customer", "it","event-management")
 def all_invoices():
     invoices = InvoiceService.get_all()
 
@@ -45,7 +45,7 @@ def all_invoices():
 
 
 @invoices_bp.post("/<int:invoice_id>/pay")
-@role_required("customer", "it","event_management")
+@role_required("customer", "it","event-management")
 def pay_invoice(invoice_id):
     invoice = InvoiceService.mark_paid(invoice_id)
     if not invoice:

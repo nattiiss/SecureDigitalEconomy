@@ -133,8 +133,8 @@ function updateNavbar() {
     }
 
     // 5) My Account visibility:
-    // Only customer + IT can see it. Employees must not.
-    if (accountLink && (role === "customer" || role === "it")) {
+    // Only customer can see it. Employees must not.
+    if (accountLink && (role === "customer")) {
         accountLink.style.display = "block";
     }
 }
@@ -222,7 +222,7 @@ async function initDashboard() {
         loadEventManagementTickets();
     }
 
-    if (role === "it") {
+    if (role === "it" || role === "event-management" || role === "management") {
         loadEventManagementTickets();
         loadRequestLogs();
     }

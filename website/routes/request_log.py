@@ -10,7 +10,7 @@ request_logs_bp = Blueprint(
 
 
 @request_logs_bp.get("/")
-@role_required("management", "it","event_management")
+@role_required("management", "it","event-management")
 def get_logs():
     """
     Returns all request logs for SOC / management dashboard.
