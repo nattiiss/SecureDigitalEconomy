@@ -61,7 +61,7 @@ class RequestLogSeedService:
         payload_pool = [
             None,
             '{"q":"news"}',
-            '{"category":"book","title":"Request","message":"Hello"}',
+            '{"category":"event","title":"Request for an event","message":"Hello, please ..."}',
             '{"search":"invoice"}'
         ]
 

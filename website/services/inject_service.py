@@ -1,5 +1,5 @@
 import random
-from database.models import SimulationState, RequestLog, Payment, Ticket, Event, Client, Expense, TicketType
+from database.models import SimulationState, RequestLog, Payment, Ticket, Event, Client, Expense, TicketType,EventBackup,ExpenseBackup,PaymentBackup
 from datetime import datetime, timedelta
 from database import db
 
@@ -33,7 +33,7 @@ class InjectService:
 
     @staticmethod
     def simulate_logs_xss():
-        count = 10
+        count = 30
         xss_payloads = [
            "&lt;script&gt;alert('XSS')&lt;/script&gt;",
             "&lt;img src=x onerror=alert(1)&gt;",
@@ -94,7 +94,7 @@ class InjectService:
         base_time = datetime.now()
         logs = []
 
-        for i in range(10):
+        for i in range(40):
             log = RequestLog(
                 method="GET",
                 path=random.choice(paths),
@@ -116,28 +116,27 @@ class InjectService:
 
     @staticmethod
     def change_dashboard_values():
-        payments = Payment.query.limit(5).all()
-        for p in payments:
-            p.amount = random.choice([
-                -50000000,   
-                99999999,   
-                0
-            ])
+        # --- BACKUP FIRST ---
+        for p in Payment.query.limit(5).all():
+            db.session.add(PaymentBackup(
+                payment_id=p.id,
+                amount=p.amount
+            ))
+            p.amount = random.choice([-50000000, 99999999, 0])
 
-        events = Event.query.limit(3).all()
-        for e in events:
-            e.date = random.choice([
-                "1770-01-01",
-                "2099-12-31"
-            ])
+        for e in Event.query.limit(3).all():
+            db.session.add(EventBackup(
+                event_id=e.id,
+                date=e.date
+            ))
+            e.date = random.choice(["1770-01-01", "2099-12-31"])
 
-        expenses = Expense.query.limit(5).all()
-        for ex in expenses:
-            ex.amount = random.choice([
-                0,
-                10000000,
-                -3000
-            ])
+        for ex in Expense.query.limit(5).all():
+            db.session.add(ExpenseBackup(
+                expense_id=ex.id,
+                amount=ex.amount
+            ))
+            ex.amount = random.choice([0, 10000000, -3000])
 
         fake_clients = [
             Client(name="HACKED CLIENT", email=f"hacked{random.randint(1,999)}@evil.stuff"),
@@ -146,6 +145,42 @@ class InjectService:
 
         db.session.add_all(fake_clients)
         db.session.commit()
+
+    @staticmethod
+    def restore_dashboard_values():
+        # Restore payments
+        for b in PaymentBackup.query.all():
+            p = Payment.query.get(b.payment_id)
+            if p:
+                p.amount = b.amount
+
+        # Restore events
+        for b in EventBackup.query.all():
+            e = Event.query.get(b.event_id)
+            if e:
+                e.date = b.date
+
+        # Restore expenses
+        for b in ExpenseBackup.query.all():
+            ex = Expense.query.get(b.expense_id)
+            if ex:
+                ex.amount = b.amount
+
+        # Remove fake clients
+        Client.query.filter(
+            Client.email.like("%@evil.stuff") |
+            Client.email.like("%@fake.stuff")
+        ).delete(synchronize_session=False)
+
+        # Clear backups
+        PaymentBackup.query.delete()
+        EventBackup.query.delete()
+        ExpenseBackup.query.delete()
+
+        db.session.commit()
+
+        return {"message": "Dashboard values restored"}
+
 
     @staticmethod
     def make_fake_bookings():
@@ -169,10 +204,16 @@ class InjectService:
                     "Workshop booking inquiry"
                 ]),
                 description=random.choice([
-                    "We would like to book an event as soon as possible.",
-                    "Please confirm availability for an event.",
-                    "Booking request for upcoming corporate event.",
-                    "Automated booking request."
+                    "Hello, we’re interested in booking an event with Next Gen. Please reach out to us at office@erstee.com to discuss availability and details.",
+                    "We would like to inquire about hosting an upcoming event. Kindly contact us at pr@aone.com.",
+                    "Our team is planning an event and would love to get more information about booking with you. Please email front_desk@eobb.at.",
+                    "We’re looking to reserve a date for a corporate event. Please contact management@raiff.com with next steps.",
+                    "Could you please confirm availability for an upcoming event? You can reach us at office@reddbull.com.",
+                    "We are interested in organizing an event with Next Gen. Please get in touch via office@sparta.com.",
+                    "We’d like to request details for booking an event. Please contact us at asist@erste.com.",
+                    "Our office is currently planning an event and would appreciate further information. Email us at assistance@rebull.com.",
+                    "We are exploring event options and would like to discuss availability. Please reach out to hr@erstebank.at",
+                    "Please let us know how to proceed with an event booking. You can contact us at office@erste.at."
                 ]),
                 status="open",
                 created_at=(

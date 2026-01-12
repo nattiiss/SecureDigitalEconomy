@@ -43,8 +43,8 @@ def seed():
         clients = [
             Client(name="A1 Telekom", email="contact@A1.at", registered_date=random_date().date()),
             Client(name="OEBB Holding", email="office@oebb.at", registered_date=random_date().date()),
-            Client(name="Red Bull GmbH", email="info@redbull.com", registered_date=random_date().date()),
             Client(name="Erste Bank", email="office@erstebank.at", registered_date=random_date().date()),
+            Client(name="Red Bull GmbH", email="info@redbull.com", registered_date=random_date().date()),
             Client(name="Spar Oesterreich", email="office@spar.at", registered_date=random_date().date())
         ]
 
@@ -131,9 +131,12 @@ def seed():
             User(username="admin2", password="123", role="it"),
             User(username="admin3", password="123", role="it"),
             User(username="admin4", password="123", role="it"),
+
             User(username="A1_manager", password="123", role="customer", client_id=clients[0].id),
             User(username="OEBB_manager", password="123", role="customer", client_id=clients[1].id),
             User(username="Erste_manager", password="123", role="customer", client_id=clients[2].id),
+            User(username="Redbull_manager", password="123", role="customer", client_id=clients[3].id),
+            User(username="Spar_manager", password="123", role="customer", client_id=clients[4].id)
         ]
 
         db.session.add_all(users)
@@ -157,7 +160,7 @@ def seed():
                 amount_total=12000,
                 status="open",
                 issue_date="2025-03-01",
-                due_date="2025-03-31"
+                due_date="2026-03-31"
             ),
             Invoice(
                 invoice_number="INV-2025-002",
@@ -175,7 +178,27 @@ def seed():
                 amount_total=7500,
                 status="open",
                 issue_date="2025-04-10",
-                due_date="2025-04-30"
+                due_date="2026-04-30"
+            ),
+
+            Invoice(
+                invoice_number="INV-2025-004",
+                client_id=clients[3].id,
+                event_id=None,
+                amount_total=14365,
+                status="open",
+                issue_date="2025-12-10",
+                due_date="2026-01-30"
+            ),
+
+            Invoice(
+                invoice_number="INV-2025-005",
+                client_id=clients[4].id,
+                event_id=None,
+                amount_total=12580,
+                status="open",
+                issue_date="2026-01-10",
+                due_date="2026-02-30"
             )
         ]
 
@@ -187,7 +210,7 @@ def seed():
                 client_id=clients[0].id,
                 ticket_type_id=ticket_types[0].id,
                 title="Request new strategy workshop",
-                description="We would like to organize a workshop in June for our management team.",
+                description="We would like to organize a workshop in June for our management team. Please contact office@a1.com",
                 status="open",
                 created_at="2025-04-12"
             ),
@@ -195,7 +218,7 @@ def seed():
                 client_id=clients[1].id,
                 ticket_type_id=ticket_types[1].id,
                 title="Incorrect budget shown in dashboard",
-                description="The dashboard shows a wrong budget for our last event. Please investigate.",
+                description="The dashboard shows a wrong budget for our last event. Please investigate. For details contact office@oebb.at",
                 status="open",
                 created_at="2025-04-14"
             ),
@@ -203,10 +226,55 @@ def seed():
                 client_id=clients[2].id,
                 ticket_type_id=ticket_types[1].id,
                 title="Invoice amount seems incorrect",
-                description="The invoice amount does not match our agreement.",
-                status="in_progress",
+                description="The invoice amount does not match our agreement. For further details please contact office@erstebank.at",
+                status="open",
                 created_at="2025-04-15"
+            ),
+            Ticket(
+                client_id=clients[3].id,
+                ticket_type_id=ticket_types[0].id,
+                title="Marketing collaboration inquiry",
+                description="We are interested in discussing a potential marketing collaboration. Please contact marketing@redbull.com",
+                status="open",
+                created_at="2025-04-10"
+            ),
+
+            Ticket(
+                client_id=clients[3].id,
+                ticket_type_id=ticket_types[1].id,
+                title="Billing clarification needed",
+                description="We need clarification regarding a recent invoice. Please reach out to finance@redbull.com for further details.",
+                status="open",
+                created_at="2025-04-11"
+            ),
+
+            Ticket(
+                client_id=clients[4].id,
+                ticket_type_id=ticket_types[0].id,
+                title="Store staff training request",
+                description="We would like to organize a training session for our retail staff. Please contact hr@spar.at",
+                status="open",
+                created_at="2025-04-13"
+            ),
+
+            Ticket(
+                client_id=clients[4].id,
+                ticket_type_id=ticket_types[1].id,
+                title="Invoice review request",
+                description="Please review the latest invoice as some line items seem incorrect. You can contact accounting@spar.at",
+                status="open",
+                created_at="2025-04-14"
+            ),
+
+            Ticket(
+                client_id=clients[3].id,
+                ticket_type_id=ticket_types[0].id,
+                title="Product launch event inquiry",
+                description="We are planning a product launch event and would like to discuss possible collaboration. Please contact events@redbull.com",
+                status="open",
+                created_at="2025-04-16"
             )
+
         ]
 
         db.session.add_all(tickets)

@@ -16,7 +16,7 @@ class Ticket(db.Model):
     status = db.Column(
         db.String(20), 
         default="open"
-    )  # open | closed
+    )  # open | closed 
 
     created_at = db.Column(db.String(20))
 

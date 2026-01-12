@@ -367,6 +367,17 @@ body {
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
+.payment-table td:nth-child(2) {
+    white-space: normal;        /* allow wrapping */
+    word-break: break-word;    /* break long strings */
+    overflow-wrap: anywhere;   /* break JSON, hashes, etc */
+}
+.payment-table td:nth-child(3) {
+    white-space: normal;        /* allow wrapping */
+    word-break: break-word;    /* break long strings */
+    overflow-wrap: anywhere;   /* break JSON, hashes, etc */
+}
+
 .payment-table tr:last-child td {
     border-bottom: none;
 }
@@ -422,5 +433,91 @@ body {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+/*---Agreement----------------------------------------------------------------*/
+.agreement-banner {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 9999;
 
+  max-width: 700px;
+  margin: 0 auto;
 
+  background: rgba(20, 20, 20, 0.96);
+  color: #fff;
+
+  border-radius: 12px;
+  padding: 14px 16px;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.agreement-content {
+  flex: 1;
+}
+
+.agreement-short {
+  opacity: 0.95;
+}
+
+.agreement-details {
+  margin-top: 10px;
+  opacity: 0.9;
+}
+
+.agreement-details p {
+  margin: 6px 0;
+}
+
+.agreement-link {
+  background: none;
+  border: none;
+  color: #8ab4f8;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+}
+
+.agreement-link:hover {
+  text-decoration: underline;
+}
+
+.agreement-ok-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+
+  background: #ffffff;
+  color: #111;
+  font-weight: 600;
+  font-size: 12px;
+
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.close-btn {
+    padding: 6px 12px;
+    background: #e74c3c;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    background: #c0392b;
+}
+
+.close-btn:disabled {
+    background: #777;
+    cursor: not-allowed;
+}

@@ -704,22 +704,59 @@ async function loadEventManagementTickets() {
     body.innerHTML = "";
 
     if (tickets.length === 0) {
-        body.innerHTML = `<tr><td colspan="3">No tickets</td></tr>`;
+        body.innerHTML = `<tr><td colspan="5">No tickets</td></tr>`;
     } else {
         tickets.forEach(t => {
             const tr = document.createElement("tr");
+
+            const isClosed = t.status === "closed";
+
             tr.innerHTML = `
                 <td>${t.title}</td>
                 <td>${t.type}</td>
                 <td style="max-width:400px; color:#bdbdbd;">${t.description || "-"}</td>
-                <td>${t.status}</td>
+                <td class="ticket-status">${t.status}</td>
+                <td>
+                    ${isClosed ? "" : `<button class="close-btn" onclick="closeTicket(${t.id}, this)">Close</button>`}
+                </td>
             `;
+
             body.appendChild(tr);
         });
     }
 
     section.style.display = "block";
 }
+
+async function closeTicket(ticketId, btn) {
+    btn.disabled = true;
+    btn.textContent = "Closing...";
+
+    try {
+        const res = await fetch(`/ticket/${ticketId}/status`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ status: "closed" })
+        });
+
+        if (!res.ok) {
+            throw new Error("Failed to update");
+        }
+
+        // Update UI immediately
+        const row = btn.closest("tr");
+        row.querySelector(".ticket-status").textContent = "closed";
+        btn.remove(); // remove Close button
+
+    } catch (err) {
+        btn.disabled = false;
+        btn.textContent = "Close";
+        alert("Could not close ticket");
+    }
+}
+
 
 
 async function sendMessage(event) {
@@ -901,3 +938,46 @@ function getRandomColor() {
     const b = Math.floor(Math.random() * 200);
     return `rgba(${r},${g},${b},0.6)`;
 }
+
+(function () {
+  const KEY = "nextgen_cookie_agreement_v1";
+
+  function showBanner() {
+    const banner = document.getElementById("agreementBanner");
+    if (banner) banner.style.display = "flex";
+  }
+
+  function hideBanner() {
+    const banner = document.getElementById("agreementBanner");
+    if (banner) banner.style.display = "none";
+  }
+
+  window.toggleAgreementDetails = function () {
+    const details = document.getElementById("agreementDetails");
+    if (!details) return;
+
+    details.style.display =
+      details.style.display === "none" ? "block" : "none";
+  };
+
+  function initAgreement() {
+    if (localStorage.getItem(KEY) === "1") return;
+
+    showBanner();
+
+    const btn = document.getElementById("agreementOkBtn");
+    if (!btn) return;
+
+    btn.addEventListener("click", () => {
+      localStorage.setItem(KEY, "1");
+      hideBanner();
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAgreement);
+  } else {
+    initAgreement();
+  }
+})();
+

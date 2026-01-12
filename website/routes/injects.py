@@ -33,32 +33,37 @@ def stop_i4():
     InjectService.deactivate("defaced_index.html")
     return {"message": "Inject defaced_index.html deactivated"}
 
-@injects_bp.post("/activate/defaced_invoices")
+@injects_bp.post("/activate/defaced_dashboard")
 def start_i5():
+    InjectService.change_dashboard_values()
+    return {"message": "Inject defaced_dashboard activated"}
+
+@injects_bp.post("/deactivate/defaced_dashboard")
+def stop_i5():
+    InjectService.restore_dashboard_values()
+    return {"message": "Inject defaced_dashboard deactivated"}
+
+@injects_bp.post("/activate/defaced_invoices")
+def start_i6():
     InjectService.activate("defaced_invoices.html")
     return {"message": "Inject defaced_invoices.html activated"}
 
 @injects_bp.post("/deactivate/defaced_invoices")
-def stop_i5():
+def stop_i6():
     InjectService.deactivate("defaced_invoices.html")
     return {"message": "Inject defaced_invoices.html deactivated"}
 
-@injects_bp.post("/activate/defaced_dashboard")
-def start_i6():
-    InjectService.change_dashboard_values()
-    return {"message": "Inject defaced_dashboard activated"}
-
-@injects_bp.post("/activate/multiple_bookings")
-def start_i7():
-    InjectService.make_fake_bookings()
-    return {"message": "Inject multiple_bookings activated"}
-
 @injects_bp.post("/activate/defaced_tickets")
-def start_i8():
+def start_i7():
     InjectService.activate("defaced_tickets.html")
     return {"message": "Inject defaced_tickets.html activated"}
 
 @injects_bp.post("/deactivate/defaced_tickets")
-def stop_i8():
+def stop_i7():
     InjectService.deactivate("defaced_tickets.html")
     return {"message": "Inject defaced_tickets.html deactivated"}
+
+@injects_bp.post("/activate/multiple_bookings")
+def start_i8():
+    InjectService.make_fake_bookings()
+    return {"message": "Inject multiple_bookings activated"}
