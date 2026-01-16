@@ -41,11 +41,11 @@ def seed():
         db.session.commit()
 
         clients = [
-            Client(name="A1 Telekom", email="contact@A1.at", registered_date=random_date().date()),
-            Client(name="OEBB Holding", email="office@oebb.at", registered_date=random_date().date()),
-            Client(name="Erste Bank", email="office@erstebank.at", registered_date=random_date().date()),
-            Client(name="Red Bull GmbH", email="info@redbull.com", registered_date=random_date().date()),
-            Client(name="Spar Oesterreich", email="office@spar.at", registered_date=random_date().date())
+            Client(name="AlpenTech GmbH", email="office@alpentech.test", registered_date=random_date().date()),
+            Client(name="BluePeak AG", email="info@bluepeak.test", registered_date=random_date().date()),
+            Client(name="CityArts Verein", email="kontakt@cityarts.test", registered_date=random_date().date()),
+            Client(name="Delta Retail KG", email="sales@delta-retail.test", registered_date=random_date().date()),
+            Client(name="Red Bull GmbH", email="office@red-bull.test", registered_date=random_date().date())
         ]
 
         db.session.add_all(clients)
@@ -132,11 +132,11 @@ def seed():
             User(username="admin3", password="123", role="it"),
             User(username="admin4", password="123", role="it"),
 
-            User(username="A1_manager", password="123", role="customer", client_id=clients[0].id),
-            User(username="OEBB_manager", password="123", role="customer", client_id=clients[1].id),
-            User(username="Erste_manager", password="123", role="customer", client_id=clients[2].id),
-            User(username="Redbull_manager", password="123", role="customer", client_id=clients[3].id),
-            User(username="Spar_manager", password="123", role="customer", client_id=clients[4].id)
+            User(username="alpentech_manager", password="123", role="customer", client_id=clients[0].id),
+            User(username="bluepeak_manager", password="123", role="customer", client_id=clients[1].id),
+            User(username="cityarts_manager", password="123", role="customer", client_id=clients[2].id),
+            User(username="redbull_manager", password="123", role="customer", client_id=clients[3].id),
+            User(username="delta_manager", password="123", role="customer", client_id=clients[4].id)
         ]
 
         db.session.add_all(users)
